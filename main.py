@@ -12,6 +12,7 @@ nRes = [1200, 800]
 win = tk.Tk()
 win.title('Proyecto Transdiciplinario: Trabajo y Energia')
 win.geometry(f'{nRes[0]}x{nRes[1]}')
+win.resizable(False, False)
 # -----------------------------------------------------------#
 # Lienzo del menu
 # -----------------------------------------------------------#
