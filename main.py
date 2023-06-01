@@ -26,6 +26,10 @@ canvasCaja = tk.Canvas(win, width=640, height=500)
 canvasCaja.place(x=201, y=0)
 canvasCaja.create_rectangle(
     0, 0, 640, 500, fill='white', outline=canvasMenu['background'])
+canvasCaja.create_rectangle(
+    231, 250, 411, 400, fill='red', outline=canvasMenu['background'])
+canvasCaja.create_rectangle(
+    0, 400, 640, 500, fill='#A18072', outline=canvasMenu['background'])
 # -----------------------------------------------------------#
 # Lienzo Parametros
 # -----------------------------------------------------------#
