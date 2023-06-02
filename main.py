@@ -27,10 +27,17 @@ canvasCaja = tk.Canvas(win, width=640, height=500)
 canvasCaja.place(x=201, y=0)
 canvasCaja.create_rectangle(
     0, 0, 640, 500, fill='white', outline=canvasMenu['background'])
-canvasCaja.create_rectangle(
+fig = canvasCaja.create_rectangle(
     231, 250, 411, 400, fill='red', outline=canvasMenu['background'])
 canvasCaja.create_rectangle(
-    0, 400, 640, 500, fill='#A18072', outline=canvasMenu['background'])
+    0, 400, 640, 500,fill='#A18072', outline=canvasMenu['background'])
+# Movimiento Caja
+def mueveCaja(movimiento):
+    canvasCaja.move(fig,movimiento,0)
+    return
+# Boton 'Run'
+ButtonRun = ttk.Button(canvasCaja, text='Run', command=lambda:mueveCaja(movimiento=10))
+canvasCaja.create_window(320,450,window=ButtonRun,width=100, height=40)
 # -----------------------------------------------------------#
 # Lienzo Parametros
 # -----------------------------------------------------------#
