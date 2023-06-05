@@ -90,7 +90,7 @@ def BtnRun(movimiento):
     mueveCaja(movimiento)
 
 
-dis = 150  # Valor de prueba
+dis = -150  # Valor de prueba
 ButtonRun = tk.Button(canvasCaja, text='Run', command=lambda: BtnRun(dis))
 canvasCaja.create_window(320, 450, window=ButtonRun, width=100, height=40)
 # -----------------------------------------------------------#
@@ -100,4 +100,63 @@ canvasPmt = tk.Canvas(win, width=640, height=300)
 canvasPmt.place(x=201, y=501)
 canvasPmt.create_rectangle(
     0, 0, 640, 300, fill='lightblue', outline=canvasMenu['background'])
+# Roce
+checkRoce = tk.IntVar(value=0)
+
+
+def getRoce():
+    roce = checkRoce.get()
+    if roce == 1:
+        labelMC.place(x=20, y=50)
+        materialCaja.place(x=20, y=80)
+        labelMS.place(x=20, y=130)
+        materialSuelo.place(x=20, y=160)
+        labelR.place(x=20, y=210)
+        btnShowTable.place(x=20, y=250)
+
+    else:
+        labelMC.place_forget()
+        materialCaja.place_forget()
+        labelMS.place_forget()
+        materialSuelo.place_forget()
+        labelR.place_forget()
+    return
+
+
+def showTableR():
+    tableWin = tk.Tk()
+    tableWin.title('Tabla de Coeficientes de Roce')
+    tableR = ttk.Treeview(tableWin, columns=materiales, height=3)
+    tableR.heading('#0', text='Material')
+    tableR.column('#0', width=80)
+    for material in materiales:
+        tableR.heading(material, text=material)
+        tableR.column(material, width=60)
+    for i in range(len(materiales)):
+        material = materiales[i]
+        tableR.insert('', 'end', text=material, values=coeficientes[i])
+    tableR.pack()
+    return tableWin
+
+
+askRoce = ttk.Checkbutton(canvasPmt, text='Roce?',
+                          command=getRoce, variable=checkRoce)
+askRoce.place(x=50, y=20)
+labelMC = ttk.Label(canvasPmt, text='Material Caja')
+labelMS = ttk.Label(canvasPmt, text='Material Suelo')
+materialCaja = ttk.Combobox(canvasPmt)
+materialSuelo = ttk.Combobox(canvasPmt)
+labelR = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
+btnShowTable = ttk.Button(
+    canvasPmt, text='Mostrar Coeficientes de Roce', command=showTableR)
+# ------------------------
+materiales = ['Madera', 'Acero', 'Cobre']
+coeficientes = [
+    [0.45, 0.6, 0.45],
+    [0.5, 0.55, 0.4],
+    [0.45, 0.4, 0.4]
+]
+materialCaja = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
+materialSuelo = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
+labelR = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
 win.mainloop()
