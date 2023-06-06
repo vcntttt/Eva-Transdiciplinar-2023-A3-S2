@@ -58,6 +58,10 @@ def mueveCaja(movimiento):
     else:
         direccion = 0
     while disRecorrida < desplazamiento:
+        coords = canvasCaja.coords(fig)
+        if coords[0] <= 0 or coords[2] >= 730:
+            posIni(movimiento)
+            break
         canvasCaja.move(fig, direccion, 0)
         disRecorrida += 1
         canvasCaja.update()
@@ -80,16 +84,17 @@ labelFN = ttk.Label(canvasCaja, text='Fuerza Neta')
 
 
 def PintaLinea(movimiento):
+    canvasCaja.delete("linea")
     if movimiento > 0:
-        canvasCaja.create_polygon(411, 200, 391, 190, 391, 210, fill='black')
-        canvasCaja.create_line(200, 200, 411, 200, fill='black', width=3)
+        canvasCaja.create_polygon(391, 190, 391, 210, 411, 200, fill='black', tags="linea")
+        canvasCaja.create_line(200, 200, 411, 200, fill='black', width=3, tags="linea")
         canvasCaja.create_window(320, 150, window=labelFN)
     elif movimiento < 0:
-        canvasCaja.create_line(200, 200, 411, 200, fill='black', width=3)
-        canvasCaja.create_polygon(180, 200, 200, 190, 200, 210, fill='black')
+        canvasCaja.create_line(200, 200, 411, 200, fill='black', width=3, tags="linea")
+        canvasCaja.create_polygon(200, 190, 200, 210, 180, 200, fill='black', tags="linea")
     else:
         return
-    return
+    
 
 
 
@@ -99,12 +104,8 @@ def BtnRun(movimiento):
     PintaLinea(movimiento)
     calcular_MV_thread()
     calcular_FDA_thread()
-    calcular_FD_thread()
     mueveCaja(movimiento)
     
-
-
-
 
 dis = -150  # Valor de prueba
 ButtonRun = tk.Button(canvasCaja, text='Run', command=lambda: BtnRun(dis))
@@ -175,18 +176,18 @@ def calcular_FDA():
         angulo = float(entryA.get())
         resultado = fuerza * desplazamiento * angulo
         label_reFDA.config(text="Resultado: " + str(resultado))
+        PintaLinea(resultado)
+        mueveCaja(resultado)
 
-def calcular_FD():
-    fuerza = float(entryF.get())
-    desplazamiento = float(entryD.get())
-    resultado = fuerza * desplazamiento
-    label_reFDA.config(text="Resultado: " + str(resultado))
     
 def calcular_MV():
     masa = float(entryM.get())
     velocidad = float(entryV.get())
     resultado = (0.5 * masa) * (velocidad ** 2)
     label_reFDA.config(text="Resultado: " + str(resultado))
+    PintaLinea(resultado)
+    mueveCaja(resultado)
+
     
 #-------------------------------------------------------------
 # Llamada a los calculos
@@ -195,9 +196,6 @@ def calcular_FDA_thread():
     thread = th.Thread(target=calcular_FDA)
     thread.start()
     
-def calcular_FD_thread():
-    thread = th.Thread(target=calcular_FD)
-    thread.start()
     
 def calcular_MV_thread():
     thread = th.Thread(target=calcular_MV)
@@ -215,8 +213,8 @@ materialSuelo = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 labelR = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
 
 # Resto de Parametros
-modos = ['Fuerza, Desplazamiento y Angulo',
-         'Fuerza y Desplazamiento', 'Masa, Velocidad, Altura']
+modos = ['Fuerza, Desplazamiento y Angulo'
+         , 'Masa, Velocidad, Altura']
 modo = ttk.Combobox(canvasPmt, values=modos, state='readonly')
 labelModo = ttk.Label(canvasPmt, text='Escoja un modo: ',
                       background='lightblue')
@@ -251,16 +249,6 @@ def refreshPmt(event):
         labelA.place(x=350, y=230)
         entryA.place(x=350, y=260)
         label_reFDA.place(x=520, y=215)
-        entryM.place_forget()
-        entryV.place_forget()
-        entryH.place_forget()
-    elif choice == 'Fuerza y Desplazamiento':
-        labelF.place(x=350, y=70)
-        entryF.place(x=350, y=100)
-        labelD.place(x=350, y=150)
-        entryD.place(x=350, y=200)
-        label_reFDA(x=520,y=215) 
-        entryA.place_forget()
         entryM.place_forget()
         entryV.place_forget()
         entryH.place_forget()
