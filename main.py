@@ -1,5 +1,5 @@
-import tkinter as tk
-from tkinter import ttk
+import tkinter as tk ; import matplotlib.pyplot as plt ;
+from tkinter import ttk,Frame,Button; from matplotlib.figure import Figure ;from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import time
 nRes = [1200, 800]
 # Dimensiones (ojo, no son coordenadas, es lo que miden los espacios)
@@ -36,6 +36,9 @@ fig = canvasCaja.create_rectangle(
 # Suelo
 canvasCaja.create_rectangle(
     0, 400, 640, 500, fill='#A18072', outline=canvasMenu['background'])
+#lienzo graficos
+frame= Frame(win, bg='light blue',width=400,height=400)
+frame.place(x=841,y=1)
 
 
 # Movimiento Caja
@@ -159,4 +162,20 @@ coeficientes = [
 materialCaja = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 materialSuelo = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 labelR = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
+win.mainloop()
+
+#-----------------
+
+x = [1,2,3,4,5]
+y = [2,4,6,8,10]
+
+fig, axs=plt.subplots(1,dpi=80,figsize=(10,4),sharey=True, faceolor='#00f9f844')
+fig.subtitle('Graficos') 
+
+axs[1].plot(x,y,color='m')
+
+canvas = FigureCanvasTkAgg(fig, master= frame)
+canvas.draw()
+canvas.get_tk_widget().grid(colum=0, row=0)
+
 win.mainloop()
