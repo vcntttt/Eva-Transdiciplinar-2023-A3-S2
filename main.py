@@ -1,3 +1,4 @@
+import PyAutoGUI
 import tkinter as tk
 from tkinter import ttk
 import time
@@ -21,6 +22,20 @@ canvasMenu = tk.Canvas(win, width=200, height=800)
 canvasMenu.place(x=0, y=0)
 canvasMenu.create_rectangle(
     0, 0, 200, 800, fill='lightgray', outline=canvasMenu['background'])
+canvasMenu.create_text(
+    107, 90, text="MENU", fill="black", font=('Helvetica 15 bold'))
+boton = ttk.Button(text="Boton Que Imprima")
+boton.place(x=50, y=130)
+def captura():
+    PyAutoGUI.screenshot()
+    captura.save("screenshot.png")
+
+
+boton2 = ttk.Button(text="Boton Screenshot", command=captura)
+boton2.place(x=55, y=200)
+canvasMenu.create_text(
+    107, 300, text= "Se Aceptan Ideas ;)", fill="green", font=("helvetica 15 bold"))    
+
 # -----------------------------------------------------------#
 # Lienzo Caja
 # -----------------------------------------------------------#
