@@ -214,7 +214,7 @@ labelR = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
 
 # Resto de Parametros
 modos = ['Fuerza, Desplazamiento y Angulo'
-         , 'Masa, Velocidad, Altura']
+         , 'Masa, Velocidad']
 modo = ttk.Combobox(canvasPmt, values=modos, state='readonly')
 labelModo = ttk.Label(canvasPmt, text='Escoja un modo: ',
                       background='lightblue')
@@ -223,13 +223,11 @@ entryD = ttk.Entry(canvasPmt)
 entryA = ttk.Entry(canvasPmt)
 entryM = ttk.Entry(canvasPmt)
 entryV = ttk.Entry(canvasPmt)
-entryH = ttk.Entry(canvasPmt)
 labelF = ttk.Label(canvasPmt, text='Fuerza (N)')
 labelD = ttk.Label(canvasPmt, text='Desplazamiento (mt)')
 labelA = ttk.Label(canvasPmt, text='Angulo')
 labelM = ttk.Label(canvasPmt, text='Masa (Kg)')
 labelV = ttk.Label(canvasPmt, text='Velocidad (mt/s**2)')
-labelH = ttk.Label(canvasPmt, text='Altura (mt)')
 label_reFDA = ttk.Label(canvasPmt, text="Resultado:")
 
 
@@ -249,18 +247,20 @@ def refreshPmt(event):
         labelA.place(x=350, y=230)
         entryA.place(x=350, y=260)
         label_reFDA.place(x=520, y=215)
+        labelM.place_forget()
+        labelV.place_forget()
         entryM.place_forget()
         entryV.place_forget()
-        entryH.place_forget()
 
-    elif choice == 'Masa, Velocidad, Altura':
+    elif choice == 'Masa, Velocidad':
         labelM.place(x=350, y=70)
         entryM.place(x=350, y=100)
         labelV.place(x=350, y=150)
         entryV.place(x=350, y=180)
-        labelH.place(x=350, y=230)
-        entryH.place(x=350, y=260)
         label_reFDA.place(x=520, y=215)
+        labelF.place_forget()
+        labelD.place_forget()
+        labelA.place_forget()
         entryA.place_forget()
         entryF.place_forget()
         entryD.place_forget()
