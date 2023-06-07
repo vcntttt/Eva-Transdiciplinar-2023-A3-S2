@@ -1,7 +1,7 @@
-import PyAutoGUI
 import tkinter as tk
 import time
 import ttkbootstrap as ttk
+from PIL import ImageGrab
 nRes = [1200, 800]
 # Dimensiones (ojo, no son coordenadas, es lo que miden los espacios)
 # Menu --> 200x800
@@ -20,7 +20,7 @@ win.resizable(False, False)
 # Init Canvas
 # -----------------------------------------------------------#
 canvasMenu = ttk.Canvas(win, width=200, height=800)
-canvasMenu.create_rectangle(0, 0, 200, 800, fill='#2f3123')
+canvasMenu.create_rectangle(0, 0, 200, 800, fill='#2f3123', outline='#2f3123')
 canvasMenu.place(x=0, y=0)
 canvasPmt = ttk.Canvas(win, width=640, height=300)
 canvasPmt.create_rectangle(0, 0, 640, 300, fill='#f1cc7a', outline='#f1cc7a')
@@ -32,21 +32,21 @@ canvasCaja.place(x=201, y=0)
 # -----------------------------------------------------------#
 
 canvasMenu.create_text(
-    107, 90, text="MENU", fill="black", font=('Helvetica 15 bold'))
+    107, 90, text="MENU", fill="white", font=('Helvetica 15 bold'))
 boton = ttk.Button(text="Boton Que Imprima")
 boton.place(x=50, y=130)
 
 
-def captura():
-    PyAutoGUI.screenshot()
-    captura.save("screenshot.png")
+def screenshot():
+    x = win.winfo_rootx()
+    y = win.winfo_rooty()
+    captura = ImageGrab.grab(bbox=(x, y, x+nRes[0], y+nRes[1]))
+    captura.save('captura.png')
+    return
 
 
-boton2 = ttk.Button(text="Boton Screenshot", command=captura)
+boton2 = ttk.Button(text="Boton Screenshot", command=screenshot)
 boton2.place(x=55, y=200)
-canvasMenu.create_text(
-    107, 300, text="Se Aceptan Ideas ;)", fill="green", font=("helvetica 15 bold"))
-
 # -----------------------------------------------------------#
 # Lienzo Caja
 # -----------------------------------------------------------#
@@ -90,27 +90,22 @@ def posIni(movimiento):
 
 # Linea Referencia Movimiento
 labelFN = ttk.Label(canvasCaja, text='Desplazamiento', font=('Helvetica', 20))
-puntaPos = None
-puntaNeg = None
 
 
 def PintaLinea(movimiento):
-    global puntaPos, puntaNeg
+    canvasCaja.delete('linea')
     if movimiento > 0:
-        puntaPos = canvasCaja.create_polygon(
-            411, 200, 391, 190, 391, 210, fill='black')
+        canvasCaja.create_polygon(
+            411, 200, 391, 190, 391, 210, fill='black', tags='linea')
         canvasCaja.create_line(
-            200, 200, 411, 200, fill='black', width=3)
+            200, 200, 411, 200, fill='black', width=3, tags='linea')
         canvasCaja.create_window(320, 150, window=labelFN)
-        if puntaNeg is not None:
-            canvasCaja.delete(puntaNeg)
     elif movimiento < 0:
-        canvasCaja.create_line(200, 200, 411, 200, fill='black', width=3)
-        puntaNeg = canvasCaja.create_polygon(
-            180, 200, 200, 190, 200, 210, fill='black')
+        canvasCaja.create_line(
+            200, 200, 411, 200, fill='black', width=3, tags='linea')
+        canvasCaja.create_polygon(
+            180, 200, 200, 190, 200, 210, fill='black', tags='linea')
         canvasCaja.create_window(320, 150, window=labelFN)
-        if puntaPos is not None:
-            canvasCaja.delete(puntaPos)
     else:
         return
     return
