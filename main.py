@@ -72,18 +72,28 @@ def posIni(movimiento):
 
 
 # Linea Referencia Movimiento
-labelFN = ttk.Label(canvasCaja, text='Desplazamiento')
+labelFN = ttk.Label(canvasCaja, text='Desplazamiento', font=('Helvetica', 20))
+puntaPos = None
+puntaNeg = None
 
 
 def PintaLinea(movimiento):
+    global puntaPos, puntaNeg
     if movimiento > 0:
-        canvasCaja.create_polygon(411, 200, 391, 190, 391, 210, fill='black')
-        canvasCaja.create_line(200, 200, 411, 200, fill='black', width=3)
+        puntaPos = canvasCaja.create_polygon(
+            411, 200, 391, 190, 391, 210, fill='black')
+        canvasCaja.create_line(
+            200, 200, 411, 200, fill='black', width=3)
         canvasCaja.create_window(320, 150, window=labelFN)
+        if puntaNeg is not None:
+            canvasCaja.delete(puntaNeg)
     elif movimiento < 0:
         canvasCaja.create_line(200, 200, 411, 200, fill='black', width=3)
-        canvasCaja.create_polygon(180, 200, 200, 190, 200, 210, fill='black')
+        puntaNeg = canvasCaja.create_polygon(
+            180, 200, 200, 190, 200, 210, fill='black')
         canvasCaja.create_window(320, 150, window=labelFN)
+        if puntaPos is not None:
+            canvasCaja.delete(puntaPos)
     else:
         return
     return
@@ -172,7 +182,8 @@ def calcRoce(caja, suelo):
 
 
 askRoce = ttk.Checkbutton(canvasPmt, text='Roce?',
-                          command=getRoce, variable=checkRoce)
+                          command=getRoce, variable=checkRoce,
+                          bootstyle='round-toggle')
 askRoce.place(x=50, y=20)
 labelMC = ttk.Label(canvasPmt, text='Material Caja')
 labelMS = ttk.Label(canvasPmt, text='Material Suelo')
@@ -183,9 +194,8 @@ materialSuelo = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 materialCaja.bind('<<ComboboxSelected>>', getCoefRoce)
 materialSuelo.bind('<<ComboboxSelected>>', getCoefRoce)
 labelRr = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
+
 # Resto de Parametros
-modos = ['Fuerza, Desplazamiento y Angulo', 'Masa y Velocidad']
-modo = ttk.Combobox(canvasPmt, values=modos, state='readonly')
 labelModo = ttk.Label(canvasPmt, text='Escoja un modo: ',
                       background='lightblue')
 entryF = ttk.Entry(canvasPmt)
@@ -201,15 +211,18 @@ labelM = ttk.Label(canvasPmt, text='Masa (Kg)')
 labelV = ttk.Label(canvasPmt, text='Velocidad (mt/s**2)')
 labelH = ttk.Label(canvasPmt, text='Altura (mt)')
 labelR = ttk.Label(canvasPmt, text="Resultado:")
+selectVar = tk.StringVar()
+rbtn1 = ttk.Radiobutton(
+    canvasPmt, text='Fuerza, Desplazamiento y Angulo', value='FDA', variable=selectVar)
+rbtn2 = ttk.Radiobutton(
+    canvasPmt, text='Masa y Velocidad', value='MV', variable=selectVar)
+rbtn1.place(x=350, y=20)
+rbtn2.place(x=350, y=50)
 
 
-modo.place(x=350, y=20)
-labelModo.place(x=250, y=20)
-
-
-def refreshPmt(event):
-    choice = modo.get()
-    if choice == 'Fuerza, Desplazamiento y Angulo':
+def refreshPmt(*args):
+    choice = selectVar.get()
+    if choice == 'FDA':
         labelF.place(x=350, y=70)
         entryF.place(x=350, y=100)
         labelD.place(x=350, y=150)
@@ -221,7 +234,7 @@ def refreshPmt(event):
         entryV.place_forget()
         labelM.place_forget()
         labelV.place_forget()
-    elif choice == 'Masa y Velocidad':
+    elif choice == 'MV':
         labelM.place(x=350, y=70)
         entryM.place(x=350, y=100)
         labelV.place(x=350, y=150)
@@ -234,26 +247,7 @@ def refreshPmt(event):
         labelA.place_forget()
         entryA.place_forget()
 
-# -------------------------------------------------------------
-# Calculos
-# -------------------------------------------------------------
 
-
-def calcular_FDA():
-    fuerza = float(entryF.get())
-    desplazamiento = float(entryD.get())
-    angulo = float(entryA.get())
-    resultado = fuerza * desplazamiento * angulo
-    labelR.config(text="Resultado: " + str(resultado))
-
-
-def calcular_MV():
-    masa = float(entryM.get())
-    velocidad = float(entryV.get())
-    resultado = (0.5 * masa) * (velocidad ** 2)
-    labelR.config(text="Resultado: " + str(resultado))
-
-
-modo.bind('<<ComboboxSelected>>', refreshPmt)
+selectVar.trace('w', refreshPmt)
 
 win.mainloop()
