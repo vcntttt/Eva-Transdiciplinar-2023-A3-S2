@@ -1,5 +1,6 @@
 import tkinter as tk
 import time
+import math
 import ttkbootstrap as ttk
 from PIL import ImageGrab
 nRes = [1200, 800]
@@ -28,26 +29,6 @@ canvasPmt.place(x=201, y=501)
 canvasCaja = ttk.Canvas(win, width=640, height=500)
 canvasCaja.place(x=201, y=0)
 # -----------------------------------------------------------#
-# Lienzo del menu
-# -----------------------------------------------------------#
-
-canvasMenu.create_text(
-    107, 90, text="MENU", fill="white", font=('Helvetica 15 bold'))
-boton = ttk.Button(text="Boton Que Imprima")
-boton.place(x=50, y=130)
-
-
-def screenshot():
-    x = win.winfo_rootx()
-    y = win.winfo_rooty()
-    captura = ImageGrab.grab(bbox=(x, y, x+nRes[0], y+nRes[1]))
-    captura.save('captura.png')
-    return
-
-
-boton2 = ttk.Button(text="Boton Screenshot", command=screenshot)
-boton2.place(x=55, y=200)
-# -----------------------------------------------------------#
 # Lienzo Caja
 # -----------------------------------------------------------#
 # Caja
@@ -71,14 +52,20 @@ def mueveCaja(movimiento):
     else:
         direccion = 0
     while disRecorrida < desplazamiento:
+        coords = canvasCaja.coords(fig)
+        esqDer = coords[2] + direccion
+        esqIzq = coords[0] + direccion
         canvasCaja.move(fig, direccion, 0)
         disRecorrida += 1
+        if esqDer > 640 or esqIzq < 0:
+            posIni()
+            break
         canvasCaja.update()
-        time.sleep(0.02)
+        time.sleep(0.01)
     return
 
 
-def posIni(movimiento):
+def posIni():
     coords = canvasCaja.coords(fig)
     if coords[0] != posIniX:
         if coords[0] > posIniX:
@@ -113,27 +100,32 @@ def PintaLinea(movimiento):
 
 # Boton 'Run'
 def BtnRun():
-    movimiento = calc()
-    posIni(movimiento)
+    movimiento = calc()[5]
+    posIni()
     PintaLinea(movimiento)
     mueveCaja(movimiento)
 
 
 def calc():
+    choice = refreshPmt()
     resultado = 0
     f = float(entryF.get()+'0')
     d = float(entryD.get()+'0')
     a = float(entryA.get()+'0')
     m = float(entryM.get()+'0')
     v = float(entryV.get()+'0')
-    if f and d and a:
-        resultado = f * d * a
+    if choice == 'FDA':
+        a = math.radians(a)
+        resultado = f * d * math.cos(a)
         labelR.configure(text=f"Resultado: {resultado}")
-    elif m and v:
+    elif choice == 'MV':
         resultado = (0.5 * m) * (v ** 2)
         labelR.configure(text=f"Resultado: {resultado}")
-    print(f, d, a, m, v, resultado)
-    return resultado
+    if int(resultado) != resultado:
+        resultadoF = '{:.2f}'.format(resultado)
+        labelR.configure(text=f'Resultado:{resultadoF}')
+    valores = [f, d, a, m, v, resultado]
+    return valores
 
 
 ButtonRun = ttk.Button(canvasCaja, text='Run', command=BtnRun)
@@ -258,8 +250,36 @@ def refreshPmt(*args):
         entryD.place_forget()
         labelA.place_forget()
         entryA.place_forget()
+    return choice
 
 
 selectVar.trace('w', refreshPmt)
+# -----------------------------------------------------------#
+# Lienzo del menu
+# -----------------------------------------------------------#
 
+
+def printValues():
+    valores = calc()
+    sValues = f'Fuerza: {valores[0]}\nDesplazamiento:{valores[1]}\nAngulo: {valores[2]}\nMasa:{valores[3]}\nVelocidad:{valores[4]}\nTrabajo: {valores[5]}'
+    print(sValues)
+    canvasMenu.create_text(100, 300, text=sValues, fill='white')
+    return
+
+
+def screenshot():
+    x = win.winfo_rootx()
+    y = win.winfo_rooty()
+    captura = ImageGrab.grab(bbox=(x, y, x+nRes[0], y+nRes[1]))
+    captura.save('captura.png')
+    return
+
+
+canvasMenu.create_text(107, 90, text="MENU", fill="white",
+                       font=('Helvetica 15 bold'))
+boton2 = ttk.Button(text="Screenshot", command=screenshot)
+boton2.place(x=55, y=130)
+boton = ttk.Button(text="Imprimir valores guardados",
+                   command=printValues)
+boton.place(x=15, y=200)
 win.mainloop()
