@@ -1,9 +1,15 @@
+import tkinter as tk ; import matplotlib.pyplot as plt ;
+from tkinter import ttk,Frame,Button; from matplotlib.figure import Figure ;from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
-from tkinter import ttk
+from tkinter import messagebox as msg
+import ttkbootstrap as ttk
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import time
 import math
 from PIL import ImageGrab
-nRes = [1200, 800]
+nRes = [1350, 800]
 # Dimensiones (ojo, no son coordenadas, es lo que miden los espacios)
 # Menu --> 200x800
 # Caja Objeto --> 640x500
@@ -17,6 +23,27 @@ win.iconbitmap('icon.ico')
 win.title('Proyecto Transdiciplinario: Trabajo y Energia')
 win.geometry(f'{nRes[0]}x{nRes[1]}')
 win.resizable(False, False)
+# -----------------------------------------------------------#
+# Grafico
+# -----------------------------------------------------------#
+
+def grafico():
+    Fuerza = [0,4,0]
+    Desplazamiento = [0,8]
+
+
+    figure = plt.figure(figsize=(4.5, 3.8), dpi=90)
+    ax = figure.add_subplot(111)
+
+    ax.plot(Desplazamiento, Fuerza, '-o')        
+    ax.set_xlabel('Desplazamiento')
+    ax.set_ylabel('Fuerza')
+
+    canvas = FigureCanvasTkAgg(figure, master=win)
+    canvas.draw()
+    canvas.get_tk_widget().place(x=843, y=3)
+
+
 # -----------------------------------------------------------#
 # Init Canvas
 # -----------------------------------------------------------#
@@ -39,7 +66,6 @@ fig = canvasCaja.create_rectangle(
 # Suelo
 canvasCaja.create_rectangle(
     0, 400, 640, 500, fill='#A18072', outline=canvasMenu['background'])
-
 
 # Movimiento Caja
 def mueveCaja(movimiento):
@@ -297,11 +323,14 @@ def printValues():
     return
 
 
+contador = 1
 def screenshot():
+    global contador
     x = win.winfo_rootx()
     y = win.winfo_rooty()
     captura = ImageGrab.grab(bbox=(x, y, x+nRes[0], y+nRes[1]))
-    captura.save('captura.png')
+    captura.save(f'captura_{contador}.png')
+    contador += 1
     return
 
 
@@ -320,20 +349,4 @@ btnSS.place(relx=0.5, anchor='center', y=130)
 btnPrint = ttk.Button(canvasMenu, text="Imprimir valores guardados",
                       command=printValues)
 btnPrint.place(relx=0.5, anchor='center', y=200)
-win.mainloop()
-
-#-----------------
-
-x = [1,2,3,4,5]
-y = [2,4,6,8,10]
-
-fig, axs=plt.subplots(1,dpi=80,figsize=(10,4),sharey=True, faceolor='#00f9f844')
-fig.subtitle('Graficos') 
-
-axs[1].plot(x,y,color='m')
-
-canvas = FigureCanvasTkAgg(fig, master= frame)
-canvas.draw()
-canvas.get_tk_widget().grid(colum=0, row=0)
-
 win.mainloop()
