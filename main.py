@@ -12,7 +12,7 @@ nRes = [1200, 800]
 # Caja Objeto --> 640x500
 # Caja Parametros --> 640x300
 # Ambos graficos son de 400x400
-# -----------------------------------------------------------#
+# ----------------------------------------------------------#
 # Tkinter base
 # -----------------------------------------------------------#
 win = ttk.Window(themename='flatly')
@@ -206,7 +206,7 @@ def calcRoce(caja, suelo):
 askRoce = ttk.Checkbutton(canvasTyEc, text='Roce?',
                           command=getRoce, variable=checkRoce,
                           bootstyle='round-toggle')
-askRoce.place(x=30, y=100)
+askRoce.place(x=30, y=180)
 labelMC = ttk.Label(canvasPmt, text='Material Caja')
 labelMS = ttk.Label(canvasPmt, text='Material Suelo')
 materiales = ['Madera', 'Acero', 'Cobre']
@@ -235,8 +235,8 @@ rbtn1 = ttk.Radiobutton(
     canvasTyEc, text='Calcular Trabajo : ', value='FDA', variable=selectVar)
 rbtn2 = ttk.Radiobutton(
     canvasTyEc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar)
-rbtn1.place(x=30, y=20)
-rbtn2.place(x=30, y=60)
+rbtn1.place(x=30, y=100)
+rbtn2.place(x=30, y=140)
 
 
 def refreshPmt(*args):
@@ -326,6 +326,10 @@ table.heading('Magnitud', text='Magnitud')
 table.column('Unidad', width=110)
 table.column('Magnitud', width=80)
 
+labelTitleTyEc = ttk.Label(canvasTyEc, text='Calculos', font=('Times new roman', 20),
+                           foreground='white', background='#2f3123')
+labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
+
 labelTitleM = ttk.Label(canvasMenu, text='Menu',
                         font=('Times new roman', 20), foreground='white', background='#2f3123')
 labelTitleM.place(relx=0.5, anchor='center', y=50)
@@ -336,5 +340,7 @@ btnPrint = ttk.Button(canvasMenu, text="Imprimir valores guardados",
 btnPrint.place(relx=0.5, anchor='center', y=200)
 btnF = ttk.Button(canvasMenu, text='Formulas',command=formulas)
 btnF.place(relx=0.5, anchor='center', y=270)
+
+
 
 win.mainloop()
