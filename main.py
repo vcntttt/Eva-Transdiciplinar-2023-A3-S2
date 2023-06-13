@@ -1,9 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox as msg
 import ttkbootstrap as ttk
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import time
 import math
 from PIL import ImageGrab
@@ -102,15 +99,16 @@ def PintaLinea(movimiento):
 
 # Boton 'Run'
 def BtnRun():
-    calculo = float(calc()[7])
+    desplazamiento = float(calc()[1])
     posIni()
-    PintaLinea(calculo)
-    mueveCaja(calculo)
+    PintaLinea(desplazamiento)
+    mueveCaja(desplazamiento)
 
 
 def calc():
     choice = refreshPmt()
     f = d = aG = aR = m = v = 0
+    g = 9.8
     rType = 'Resultado'
     rNum = 0
     if choice == 'FDA':
@@ -119,6 +117,9 @@ def calc():
             d = float(entryD.get())
             aG = float(entryA.get())
             aR = math.radians(aG)
+            roce = getCoefRoce()
+            if roce != 0:
+                workFr = -(roce * m*g*d)
             trabajo = f * d * math.cos(aR)
             aR = '{:.4f}'.format(aR)
             rType = 'Trabajo'
@@ -182,6 +183,7 @@ def getCoefRoce(event):
     coeficiente = calcRoce(caja, suelo)
     if coeficiente:
         labelRr.configure(text=f'El coeficiente de roce es {coeficiente}')
+    return coeficiente
 
 
 def calcRoce(caja, suelo):
@@ -275,32 +277,6 @@ selectVar.trace('w', refreshPmt)
 # -----------------------------------------------------------#
 
 
-def printValues():
-    choice = refreshPmt()
-    values = calc()
-    table.delete(*table.get_children())
-    data = [
-        ['Fuerza', f'{values[0]}'],
-        ['Desplazamiento', f'{values[1]}'],
-        ['Angulo (Grados)', f'{values[2]}'],
-        ['Angulo (Radianes)', f'Aprox {values[3]}'],
-        ['Masa', f'{values[4]}'],
-        ['Velocidad', f'{values[5]}'],
-        [f'{values[6]}', f'{values[7]}'],]
-    if choice == 'FDA':
-        table.insert('', 'end', values=data[0])
-        table.insert('', 'end', values=data[1])
-        table.insert('', 'end', values=data[2])
-        table.insert('', 'end', values=data[3])
-        table.insert('', 'end', values=data[6])
-    elif choice == 'MV':
-        table.insert('', 'end', values=data[4])
-        table.insert('', 'end', values=data[5])
-        table.insert('', 'end', values=data[6])
-    table.place(x=5, y=300)
-    return
-
-
 def screenshot():
     x = win.winfo_rootx()
     y = win.winfo_rooty()
@@ -309,19 +285,27 @@ def screenshot():
     return
 
 
-table = ttk.Treeview(canvasMenu, columns=(
+table = ttk.Treeview(win, columns=(
     'Unidad', 'Magnitud'), show='headings', style='primary')
 table.heading('Unidad', text='Unidad')
 table.heading('Magnitud', text='Magnitud')
-table.column('Unidad', width=110)
-table.column('Magnitud', width=80)
+table.column('Unidad', width=200)
+table.column('Magnitud', width=160
+             )
+table.insert('', 'end', values=['Fuerza', '0'])
+table.insert('', 'end', values=['Desplazamiento', '0'])
+table.insert('', 'end', values=['Angulo (Grados)', '0'])
+table.insert('', 'end', values=['Angulo (Radianes)', '0'])
+table.insert('', 'end', values=['Masa', '0'])
+table.insert('', 'end', values=['Velocidad', '0'])
+table.insert('', 'end', values=['Resultado', '0'])
+table.place(x=841, y=400)
 
 labelTitleM = ttk.Label(canvasMenu, text='Menu',
                         font=('Helvetica', 20), foreground='white', background='#2f3123')
 labelTitleM.place(relx=0.5, anchor='center', y=50)
 btnSS = ttk.Button(canvasMenu, text="Screenshot", command=screenshot)
 btnSS.place(relx=0.5, anchor='center', y=130)
-btnPrint = ttk.Button(canvasMenu, text="Imprimir valores guardados",
-                      command=printValues)
-btnPrint.place(relx=0.5, anchor='center', y=200)
+# btnPrint = ttk.Button(canvasMenu, text="Imprimir valores guardados")
+# btnPrint.place(relx=0.5, anchor='center', y=200)
 win.mainloop()
