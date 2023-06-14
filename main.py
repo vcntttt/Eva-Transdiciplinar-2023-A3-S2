@@ -135,22 +135,77 @@ def screenshot():
 #-------------------------------------------------------------#
 # Modelo Matematico
 #-------------------------------------------------------------#
+
+labelTitleFT = ttk.Label(canvasMenu, text= 'Del Trabajo', font=('Times new roman',20),
+                    foreground='white', background='#2f3123')
+labelTitleVE = ttk.Label(canvasMenu, text= 'Variacion de energia', font=('Times new roman',20),
+                    foreground='white', background='#2f3123')
+labelTitleFEc = ttk.Label(canvasMenu, text= 'De Energia Cinetica', font=('Times new roman',20),
+                    foreground='white', background='#2f3123')
+#-------------------------------------------------------------#
+FT = ttk.Label(canvasMenu, text= 'W = | F | x | D | x cos a°', font=('Times new roman',18),
+                    foreground='white',background='#2f3123')
+FEc = ttk.Label(canvasMenu, text= 'Ec = ½m V²', font=('Times new roman',18),
+                    foreground='white',background='#2f3123')
+FWEc = ttk.Label(canvasMenu, text= 'W = ∆Ec', font=('Times new roman',18),
+                    foreground='white',background='#2f3123')
+VEc = ttk.Label(canvasMenu, text= '∆Ec = Ecf - Eci', font=('Times new roman',18),
+                    foreground='white',background='#2f3123')
+VEc_2 = ttk.Label(canvasMenu, text= '∆Ec = ½m Vf² - ½m Vi²', font=('Times new roman',18),
+                    foreground='white',background='#2f3123')
+
+
+#-------------------------------------------------------------#
+labelTitleD= ttk.Label(canvasMenu, text= 'Donde: \n•W = Trabajo\n•F = Fuerza\n•D = Distancia\n•a = angulo',
+                    font=('Times new roman',18),foreground='white', background='#2f3123')
+labelTitleD_1 = ttk.Label(canvasMenu, text= 'Donde: \n•Ec = Energia Cinetica\n•m = Masa\n•V = Velocidad\n',
+                    font=('Times new roman',18),foreground='white', background='#2f3123')
+labelTitleD_2 = ttk.Label(canvasMenu, text= 'Donde: \n•∆Ec = Variacion\nde energia cinetica\n•Ecf = Energia\nCinetica Final\n•Eci = Energia\nCinetica Inicial\n•m = Masa\n•Vf = Velociad final\n•Vi = Velocidad Inicial',
+                    font=('Times new roman',18),foreground='white', background='#2f3123')
+#-------------------------------------------------------------#
 def formulas():
-    labelTitleF = ttk.Label(canvasMenu, text= 'Modelo Matematico', font=('Times new roman',20),
-                            foreground='white', background='#2f3123')
-    labelTitleF.place(relx=0.5, anchor='center', y=330)
-    FT = ttk.Label(canvasMenu, text= 'W = | F | x | D | x cos a°', font=('Times new roman',15),
-                            foreground='white',background='#2f3123')
-    FT.place(relx=0.5,anchor='center',y=380)
-    FEc = ttk.Label(canvasMenu, text= 'Ec = ½ m x V² ', font=('Times new roman',15),
-                            foreground='white',background='#2f3123')
-    FEc.place(relx=0.5,anchor='center',y=410)
-    FVEc = ttk.Label(canvasMenu, text= 'W = ∆Ec ', font=('Times new roman',13),
-                            foreground='white',background='#2f3123')
-    FVEc.place(relx=0.5,anchor='center',y=440)
-    FVEc_2 = ttk.Label(canvasMenu, text= '∆Ec = ½ m x Vf² - ½ m x Vi²', font=('Times new roman',15),
-                            foreground='white',background='#2f3123')
-    FVEc_2.place(relx=0.5,anchor='center',y=470)
+    labelTitleMM = ttk.Label(canvasMenu, text= 'Modelo Matematico', font=('Times new roman',20),
+                    foreground='white', background='#2f3123')
+    labelTitleMM.place(relx=0.5, anchor='center', y=280)
+    choice = selectVar.get()
+    if choice == 'FDA':
+        labelTitleFT.place(relx=0.5, anchor='center', y=320)
+        FT.place(relx=0.5,anchor='center',y=380)
+        labelTitleD.place(x=10,y=420)
+        labelTitleFEc.place_forget()
+        labelTitleVE.place_forget()
+        FEc.place_forget()
+        FWEc.place_forget()
+        VEc.place_forget()
+        VEc_2.place_forget()
+        labelTitleD_1.place_forget()
+        labelTitleD_2.place_forget()
+    elif choice == 'MV':
+        labelTitleFEc.place(relx=0.5, anchor='center', y=320) 
+        FEc.place(relx=0.5,anchor='center',y=380)
+        labelTitleD_1.place(x=10,y=420)
+        labelTitleFT.place_forget()
+        labelTitleVE.place_forget()
+        FT.place_forget()
+        FWEc.place_forget()
+        VEc.place_forget()
+        VEc_2.place_forget()
+        labelTitleD.place_forget()
+        labelTitleD_2.place_forget()
+    elif choice == 'MVF-MVI':
+        labelTitleVE.place(relx=0.5, anchor='center', y=320)
+        FWEc.place(relx=0.5,anchor='center',y=380)
+        VEc.place(relx=0.5,anchor='center',y=420)
+        VEc_2.place(relx=0.5,anchor='center',y=460)
+        labelTitleD_2.place(x=10,y=510)
+        labelTitleFEc.place_forget()
+        labelTitleFT.place_forget()
+        FEc.place_forget()
+        FT.place_forget()
+        labelTitleD.place_forget()
+        labelTitleD_1.place_forget()
+    return formulas
+
 #-------------------------------------------------------------#
 # 
 #-------------------------------------------------------------#
@@ -323,11 +378,11 @@ LabelVf = ttk.Label(canvasPmt, text='Velocidad Final (m/s²)',font=('Times new r
                            foreground='black', background='#f1cc7a')
 selectVar = tk.StringVar()
 rbtn1 = ttk.Radiobutton(
-    canvasTyEc, text='Calcular Trabajo : ', value='FDA', variable=selectVar)
+    canvasTyEc, text='Calcular Trabajo : ', value='FDA', variable=selectVar, command=formulas)
 rbtn2 = ttk.Radiobutton(
-    canvasTyEc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar)
+    canvasTyEc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar, command=formulas)
 rbtn3 = ttk.Radiobutton(
-    canvasTyEc, text='Variacion de energia: ', value='MVF-MVI', variable=selectVar)
+    canvasTyEc, text='Variacion de energia: ', value='MVF-MVI', variable=selectVar, command=formulas)
 rbtn1.place(x=30, y=100)
 rbtn2.place(x=30, y=140)
 rbtn3.place(x=30, y=180)
@@ -417,8 +472,8 @@ btnPrint = ttk.Button(canvasMenu, text="Imprimir valores guardados",
                       command=printValues)
 btnPrint.place(relx=0.5, anchor='center', y=200)
 
-btnF = ttk.Button(canvasMenu, text='Modelo Matematico',command=formulas)
-btnF.place(relx=0.5, anchor='center', y=270)
+#btnF = ttk.Button(canvasMenu, text='Modelo Matematico',command=formulas)
+#btnF.place(relx=0.5, anchor='center', y=270)
 #-------------------------------------------------------------#
 
 win.mainloop()
