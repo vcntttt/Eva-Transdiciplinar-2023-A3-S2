@@ -8,10 +8,10 @@ import math
 from PIL import ImageGrab
 nRes = [1200, 800]
 # Dimensiones (ojo, no son coordenadas, es lo que miden los espacios)
-# Menu --> 200x800
-# Caja Objeto --> 640x500
-# Caja Parametros --> 640x300
-# Ambos graficos son de 400x400
+# Menu --> 240x800
+# Caja Objeto --> 720x500
+# Caja Parametros --> 720x300
+# Caja de caclulos --> 240x800
 # ----------------------------------------------------------#
 # Tkinter base
 # -----------------------------------------------------------#
@@ -22,30 +22,35 @@ win.resizable(False, False)
 # -----------------------------------------------------------#
 # Init Canvas
 # -----------------------------------------------------------#
-canvasMenu = ttk.Canvas(win, width=200, height=800)
-canvasMenu.create_rectangle(0, 0, 200, 800, fill='#2f3123', outline='#2f3123')
+canvasMenu = ttk.Canvas(win, width=240, height=800)
+canvasMenu.create_rectangle(0, 0, 240, 800, fill='#2f3123', outline='#2f3123')
 canvasMenu.place(x=0, y=0)
-canvasTyEc = ttk.Canvas(win, width= 357, height=800)
-canvasTyEc.create_rectangle(0,0,357,800, fill='#2f3123', outline='#2f3123')
-canvasTyEc.place(x=843, y=0)
-canvasPmt = ttk.Canvas(win, width=640, height=300)
-canvasPmt.create_rectangle(0, 0, 640, 300, fill='#f1cc7a', outline='#f1cc7a')
-canvasPmt.place(x=201, y=501)
-canvasCaja = ttk.Canvas(win, width=640, height=500)
-canvasCaja.place(x=201, y=0)
-# -----------------------------------------------------------#
-# Lienzo Caja
-# -----------------------------------------------------------#
+canvasTyEc = ttk.Canvas(win, width= 240, height=800)
+canvasTyEc.create_rectangle(0,0,240,800, fill='#2f3123', outline='#2f3123')
+canvasTyEc.place(x=961, y=0)
+canvasPmt = ttk.Canvas(win, width=719, height=300)
+canvasPmt.create_rectangle(0, 0, 719, 300, fill='#f1cc7a', outline='#f1cc7a')
+canvasPmt.place(x=241, y=501)
+canvasCaja = ttk.Canvas(win, width=720, height=500)
+canvasCaja.create_rectangle(0, 400, 719, 500, fill='#A18072', outline='#A18072')
+canvasCaja.place(x=241, y=0)
 # Caja
-posIniX = 231
+posIniX = 271
 posIniY = 250
 fig = canvasCaja.create_rectangle(
-    posIniX, posIniY, 411, 400, fill='#ff6a36', outline='#ff6a36')
-# Suelo
-canvasCaja.create_rectangle(
-    0, 400, 640, 500, fill='#A18072', outline=canvasMenu['background'])
+    posIniX, posIniY, 451, 400, fill='#ff6a36', outline='#ff6a36')
 
+#-------------------------------------------------------------#
+# Boton Run
+#-------------------------------------------------------------#
+def BtnRun():
+    calculo = float(calc()[7])
+    posIni()
+    PintaLinea(calculo)
+    mueveCaja(calculo)
+#-------------------------------------------------------------#
 # Movimiento Caja
+#-------------------------------------------------------------#
 def mueveCaja(movimiento):
     desplazamiento = abs(movimiento)
     disRecorrida = 0
@@ -68,6 +73,11 @@ def mueveCaja(movimiento):
         time.sleep(0.01)
     return
 
+# Linea Referencia Movimiento
+labelFN = ttk.Label(canvasCaja, text='Desplazamiento', font=('Times new roman', 20))
+#-------------------------------------------------------------#
+# 
+#-------------------------------------------------------------#
 def posIni():
     coords = canvasCaja.coords(fig)
     if coords[0] != posIniX:
@@ -76,10 +86,69 @@ def posIni():
         else:
             despX = abs(coords[0]-posIniX)
         canvasCaja.move(fig, despX, 0)
+#-------------------------------------------------------------#
+# 
+#-------------------------------------------------------------#
+def printValues():
+    choice = refreshPmt()
+    values = calc()
+    table.delete(*table.get_children())
+    data = [
+        ['Fuerza', f'{values[0]}'],
+        ['Desplazamiento', f'{values[1]}'],
+        ['Angulo (Grados)', f'{values[2]}'],
+        ['Angulo (Radianes)', f'Aprox {values[3]}'],
+        ['Masa', f'{values[4]}'],
+        ['Velocidad', f'{values[5]}'],
+        ['Masa inicial', f'{values[6]}'],
+        ['Velocidad inicial', f'{values[7]}'],
+        ['Masa final', f'{values[8]}'],
+        ['Velocidad final', f'{values[9]}'],
+        [f'{values[10]}', f'{values[11]}'],]
+    if choice == 'FDA':
+        table.insert('', 'end', values=data[0])
+        table.insert('', 'end', values=data[1])
+        table.insert('', 'end', values=data[2])
+        table.insert('', 'end', values=data[3])
+        table.insert('', 'end', values=data[10])
+    elif choice == 'MV':
+        table.insert('', 'end', values=data[4])
+        table.insert('', 'end', values=data[5])
+        table.insert('', 'end', values=data[10])
+    elif choice == 'MVF-MVI':
+        table.insert('', 'end', values=data[6])
+        table.insert('', 'end', values=data[7])
+        table.insert('', 'end', values=data[8])
+        table.insert('', 'end', values=data[9])
+        table.insert('', 'end', values=data[10])
+    table.place(x=5, y=300)
+    return
+#-------------------------------------------------------------#
+# Boton de "screeshot"
+#-------------------------------------------------------------#
+contador = 1
+def screenshot():
+    global contador
+    x = win.winfo_rootx()
+    y = win.winfo_rooty()
+    captura = ImageGrab.grab(bbox=(x, y, x+nRes[0], y+nRes[1]))
+    captura.save(f'captura_{contador}.png')
+    contador += 1
+    return
+#-------------------------------------------------------------#
+# Menu
+#-------------------------------------------------------------#
+def formulas():
+    canvasF = ttk.Canvas(win, width=180,height=490)
+    canvasF.create_rectangle(0,0,180,490,fill='#e9fcff', outline='#00221e')
+    canvasF.place(x=10,y=300)
 
-# Linea Referencia Movimiento
-labelFN = ttk.Label(canvasCaja, text='Desplazamiento', font=('Times new roman', 20))
-
+    labelTitleF = ttk.Label(canvasF, text= 'Modelo\nMatematico', font=('Times new roman',20),
+                            foreground='Black')
+    labelTitleF.place(relx=0.4, anchor='center', y=34)
+#-------------------------------------------------------------#
+# 
+#-------------------------------------------------------------#
 def PintaLinea(movimiento):
     canvasCaja.delete('linea')
     if movimiento:
@@ -95,16 +164,9 @@ def PintaLinea(movimiento):
     else:
         return
     return
-
-
-# Boton 'Run'
-def BtnRun():
-    calculo = float(calc()[7])
-    posIni()
-    PintaLinea(calculo)
-    mueveCaja(calculo)
-
-
+#-------------------------------------------------------------#
+# Calculos
+#-------------------------------------------------------------#
 def calc():
     choice = refreshPmt()
     f = d = aG = aR = m = v = mi = mf = vi = vf =0
@@ -158,27 +220,25 @@ def calc():
         labelFN.configure(text=f'{rType}: {int(rNum)} Joules')
     valores = [f, d, aG, aR, m, v, mi, mf, vi, vf,rType, rNum]
     return valores
-
-
+#-------------------------------------------------------------#
+# Boton "Run"
+#-------------------------------------------------------------#
 ButtonRun = ttk.Button(canvasCaja, text='Run', command=BtnRun, style='primary')
-canvasCaja.create_window(320, 450, window=ButtonRun, width=100, height=40)
+canvasCaja.create_window(360, 450, window=ButtonRun, width=100, height=40)
 # -----------------------------------------------------------#
-# Lienzo Parametros
+# Roce
 # -----------------------------------------------------------#
-
 # Roce
 checkRoce = tk.IntVar(value=0)
-
-
+#-------------------------------------------------------------#
 def getRoce():
     roce = checkRoce.get()
     if roce == 1:
-        labelMC.place(x=130, y=140)
-        materialCaja.place(x=130, y=170)
-        labelMS.place(x=330, y=140)
-        materialSuelo.place(x=330, y=170)
-        labelRr.place(x=235, y=220)
-
+        labelMC.place(x=143, y=140)
+        materialCaja.place(x=143, y=170)
+        labelMS.place(x=431, y=140)
+        materialSuelo.place(x=431, y=170)
+        labelRr.place(x=294, y=220)
     else:
         labelMC.place_forget()
         materialCaja.place_forget()
@@ -186,16 +246,14 @@ def getRoce():
         materialSuelo.place_forget()
         labelRr.place_forget()
     return
-
-
+#-------------------------------------------------------------#
 def getCoefRoce(event):
     caja = materialCaja.get()
     suelo = materialSuelo.get()
     coeficiente = calcRoce(caja, suelo)
     if coeficiente:
         labelRr.configure(text=f'El coeficiente de roce es {coeficiente}')
-
-
+#-------------------------------------------------------------#
 def calcRoce(caja, suelo):
     if caja == 'Madera' and suelo == 'Madera':
         return 0.45
@@ -215,21 +273,24 @@ def calcRoce(caja, suelo):
         return 0.4
     elif caja == 'Cobre' and suelo == 'Cobre':
         return 0.4
-
-
+#-------------------------------------------------------------#
 askRoce = ttk.Checkbutton(canvasTyEc, text='Roce?',
                           command=getRoce, variable=checkRoce,
                           bootstyle='round-toggle')
 askRoce.place(x=30, y=220)
-labelMC = ttk.Label(canvasPmt, text='Material Caja')
-labelMS = ttk.Label(canvasPmt, text='Material Suelo')
+labelMC = ttk.Label(canvasPmt, text='Material Caja',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
+labelMS = ttk.Label(canvasPmt, text='Material Suelo',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
 materiales = ['Madera', 'Acero', 'Cobre']
 materialCaja = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 materialSuelo = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 materialCaja.bind('<<ComboboxSelected>>', getCoefRoce)
 materialSuelo.bind('<<ComboboxSelected>>', getCoefRoce)
 labelRr = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
-
+#-------------------------------------------------------------#
+# Calculos
+#-------------------------------------------------------------#
 # Resto de Parametros
 labelModo = ttk.Label(canvasPmt, text='Escoja un modo: ',
                       background='lightblue')
@@ -242,16 +303,26 @@ entryMi = ttk.Entry(canvasPmt)
 entryMf = ttk.Entry(canvasPmt)
 entryVi = ttk.Entry(canvasPmt)
 entryVf = ttk.Entry(canvasPmt)
-labelF = ttk.Label(canvasPmt, text='Fuerza (N)')
-labelD = ttk.Label(canvasPmt, text='Desplazamiento (mt)')
-labelA = ttk.Label(canvasPmt, text='Angulo(°)')
-labelM = ttk.Label(canvasPmt, text='Masa (Kg)')
-labelV = ttk.Label(canvasPmt, text='Velocidad (mt/s**2)')
-labelR = ttk.Label(canvasPmt, text="Resultado:")
-LabelMi = ttk.Label(canvasPmt, text='Masa Inicial (Kg)')
-LabelMf = ttk.Label(canvasPmt, text='Masa Final (Kg)')
-LabelVi = ttk.Label(canvasPmt, text='Velocidad Inicial (mt/s**2)')
-LabelVf = ttk.Label(canvasPmt, text='Velocidad Final (mt/s**2)')
+labelF = ttk.Label(canvasPmt, text='Fuerza',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
+labelD = ttk.Label(canvasPmt, text='Desplazamiento',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
+labelA = ttk.Label(canvasPmt, text='Angulo',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
+labelM = ttk.Label(canvasPmt, text='Masa',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
+labelV = ttk.Label(canvasPmt, text='Velocidad',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
+labelR = ttk.Label(canvasPmt, text="Resultado:",font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
+LabelMi = ttk.Label(canvasPmt, text='Masa Inicial',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
+LabelMf = ttk.Label(canvasPmt, text='Masa Final',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
+LabelVi = ttk.Label(canvasPmt, text='Velocidad Inicial',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
+LabelVf = ttk.Label(canvasPmt, text='Velocidad Final',font=('Times new roman', 15),
+                           foreground='black', background='#f1cc7a')
 selectVar = tk.StringVar()
 rbtn1 = ttk.Radiobutton(
     canvasTyEc, text='Calcular Trabajo : ', value='FDA', variable=selectVar)
@@ -262,17 +333,16 @@ rbtn3 = ttk.Radiobutton(
 rbtn1.place(x=30, y=100)
 rbtn2.place(x=30, y=140)
 rbtn3.place(x=30, y=180)
-
-
+#-------------------------------------------------------------#
 def refreshPmt(*args):
     choice = selectVar.get()
     if choice == 'FDA':
-        labelF.place(x=80, y=60)
-        entryF.place(x=80, y=90)
-        labelD.place(x=250, y=60)
-        entryD.place(x=250, y=90)
-        labelA.place(x=420, y=60)
-        entryA.place(x=420, y=90)
+        labelF.place(x=115, y=60)
+        entryF.place(x=81, y=90)
+        labelD.place(x=294, y=60)
+        entryD.place(x=294, y=90)
+        labelA.place(x=530, y=60)
+        entryA.place(x=507, y=90)
         entryM.place_forget()
         entryV.place_forget()
         labelM.place_forget()
@@ -286,10 +356,10 @@ def refreshPmt(*args):
         LabelVf.place_forget()  
         entryVf.place_forget() 
     elif choice == 'MV':
-        labelM.place(x=230, y=40)
-        entryM.place(x=230, y=70)
-        labelV.place(x=230, y=120)
-        entryV.place(x=230, y=150)
+        labelM.place(x=190, y=60)
+        entryM.place(x=152, y=90)
+        labelV.place(x=460, y=60)
+        entryV.place(x=436, y=90)
         labelF.place_forget()
         entryF.place_forget()
         labelD.place_forget()
@@ -305,14 +375,14 @@ def refreshPmt(*args):
         LabelVf.place_forget()  
         entryVf.place_forget() 
     elif choice == 'MVF-MVI':
-        LabelMi.place(x=30, y=60)
-        entryMi.place(x=30, y=90)
-        LabelMf.place(x=180, y=60) 
-        entryMf.place(x=180, y=90) 
-        LabelVi.place(x=330, y=60) 
-        entryVi.place(x=330, y=90) 
-        LabelVf.place(x=480, y=60) 
-        entryVf.place(x=480, y=90)
+        LabelMi.place(x=45, y=60)
+        entryMi.place(x=38, y=90)
+        LabelMf.place(x=220, y=60) 
+        entryMf.place(x=208, y=90) 
+        LabelVi.place(x=378, y=60) 
+        entryVi.place(x=378, y=90) 
+        LabelVf.place(x=550, y=60) 
+        entryVf.place(x=548, y=90)
         labelF.place_forget()
         entryF.place_forget()
         labelD.place_forget()
@@ -325,78 +395,19 @@ def refreshPmt(*args):
         labelV.place_forget()
         labelA.place_forget()
         entryA.place_forget()
-
     return choice
-
-
+#-------------------------------------------------------------#
 selectVar.trace('w', refreshPmt)
 # -----------------------------------------------------------#
 # Lienzo del menu
 # -----------------------------------------------------------#
-def printValues():
-    choice = refreshPmt()
-    values = calc()
-    table.delete(*table.get_children())
-    data = [
-        ['Fuerza', f'{values[0]}'],
-        ['Desplazamiento', f'{values[1]}'],
-        ['Angulo (Grados)', f'{values[2]}'],
-        ['Angulo (Radianes)', f'Aprox {values[3]}'],
-        ['Masa', f'{values[4]}'],
-        ['Velocidad', f'{values[5]}'],
-        ['Masa inicial', f'{values[6]}'],
-        ['Velocidad inicial', f'{values[7]}'],
-        ['Masa final', f'{values[8]}'],
-        ['Velocidad final', f'{values[9]}'],
-        [f'{values[10]}', f'{values[11]}'],]
-    if choice == 'FDA':
-        table.insert('', 'end', values=data[0])
-        table.insert('', 'end', values=data[1])
-        table.insert('', 'end', values=data[2])
-        table.insert('', 'end', values=data[3])
-        table.insert('', 'end', values=data[10])
-    elif choice == 'MV':
-        table.insert('', 'end', values=data[4])
-        table.insert('', 'end', values=data[5])
-        table.insert('', 'end', values=data[10])
-    elif choice == 'MVF-MVI':
-        table.insert('', 'end', values=data[6])
-        table.insert('', 'end', values=data[7])
-        table.insert('', 'end', values=data[8])
-        table.insert('', 'end', values=data[9])
-        table.insert('', 'end', values=data[10])
-    table.place(x=5, y=300)
-    return
-
-
-contador = 1
-def screenshot():
-    global contador
-    x = win.winfo_rootx()
-    y = win.winfo_rooty()
-    captura = ImageGrab.grab(bbox=(x, y, x+nRes[0], y+nRes[1]))
-    captura.save(f'captura_{contador}.png')
-    contador += 1
-    return
-
-def formulas():
-    canvasF = ttk.Canvas(win, width=180,height=490)
-    canvasF.create_rectangle(0,0,180,490,fill='#e9fcff', outline='#00221e')
-    canvasF.place(x=10,y=300)
-
-    labelTitleF = ttk.Label(canvasF, text= 'Modelo\nMatematico', font=('Times new roman',20),
-                            foreground='Black')
-    labelTitleF.place(relx=0.4, anchor='center', y=34)
-
-
-
 table = ttk.Treeview(canvasMenu, columns=(
     'Unidad', 'Magnitud'), show='headings', style='primary')
 table.heading('Unidad', text='Unidad')
 table.heading('Magnitud', text='Magnitud')
 table.column('Unidad', width=110)
 table.column('Magnitud', width=80)
-
+#-------------------------------------------------------------#
 labelTitleTyEc = ttk.Label(canvasTyEc, text='Que desea calcular?', font=('Times new roman', 20),
                            foreground='white', background='#2f3123')
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
@@ -419,7 +430,6 @@ btnPrint = ttk.Button(canvasMenu, text="Imprimir valores guardados",
 btnPrint.place(relx=0.5, anchor='center', y=200)
 btnF = ttk.Button(canvasMenu, text='Modelo Matematico',command=formulas)
 btnF.place(relx=0.5, anchor='center', y=270)
-
-
+#-------------------------------------------------------------#
 
 win.mainloop()
