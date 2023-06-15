@@ -136,8 +136,9 @@ def PintaLinea(resultado,direccion):
     if resultado:
         canvasCaja.create_line(
             275, 200, 411, 200, fill='black', width=3, tags='linea')
-        canvasCaja.create_window(350, 150, window=labelFN)
-    if choice == 'FDA': labelDl.place(x=250,y=100)
+        canvasCaja.create_window(350, 150, window=labelFN,tags='linea')
+    if choice == 'FDA': 
+        canvasCaja.create_window(350,100,window=labelDl,tags='linea')
     if direccion > 0:
         canvasCaja.create_polygon(
             411, 200, 391, 190, 391, 210, fill='black', tags='linea')
