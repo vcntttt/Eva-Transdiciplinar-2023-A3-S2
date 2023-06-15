@@ -95,8 +95,8 @@ def formulas():
 # -------------------------------------------------------------#
 
 
-def mueveCaja(direccion):
-    desplazamiento = 1000
+def mueveCaja(resultado,direccion):
+    desplazamiento = resultado * 1000
     disRecorrida = 0
     while disRecorrida < desplazamiento:
         coords = canvasCaja.coords(fig)
@@ -117,7 +117,7 @@ def BtnRun():
     direccion = float(calc()[10])
     posIni()
     PintaLinea(resultado,direccion)
-    mueveCaja(direccion)
+    mueveCaja(resultado,direccion)
 
 
 def posIni():
@@ -137,16 +137,17 @@ def PintaLinea(resultado,direccion):
         canvasCaja.create_line(
             275, 200, 411, 200, fill='black', width=3, tags='linea')
         canvasCaja.create_window(350, 150, window=labelFN,tags='linea')
-    if choice == 'FDA': 
-        canvasCaja.create_window(350,100,window=labelDl,tags='linea')
-    if direccion > 0:
-        canvasCaja.create_polygon(
+        if direccion > 0:
+            canvasCaja.create_polygon(
             411, 200, 391, 190, 391, 210, fill='black', tags='linea')
     elif direccion < 0:
         canvasCaja.create_polygon(
             275, 200, 295, 190, 295, 210, fill='black', tags='linea')
     else:
         return
+    if choice == 'FDA': 
+        canvasCaja.create_window(350,100,window=labelDl,tags='linea')
+
     return
 # -------------------------------------------------------------#
 # Funciones Parametros
