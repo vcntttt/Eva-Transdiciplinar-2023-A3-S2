@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox as msg
-import ttkbootstrap as ttk
+# import ttkbootstrap as ttk
+import customtkinter as ctk
 import time
 import math
 from PIL import ImageGrab
@@ -13,26 +14,25 @@ nRes = [1200, 800]
 # ----------------------------------------------------------#
 # Tkinter base
 # -----------------------------------------------------------#
-win = ttk.Window(themename='flatly')
+win = ctk.CTk()
+win._set_appearance_mode('light')
 win.title('Proyecto Transdiciplinario: Trabajo y Energia')
+win.iconbitmap('icon.ico')
 win.geometry(f'{nRes[0]}x{nRes[1]}')
 win.resizable(False, False)
 # -----------------------------------------------------------#
 # Init Canvas
 # -----------------------------------------------------------#
-canvasMenu = ttk.Canvas(win, width=240, height=800)
-canvasMenu.create_rectangle(0, 0, 240, 800, fill='#2f3123', outline='#2f3123')
-canvasMenu.place(x=0, y=0)
-canvasTyEc = ttk.Canvas(win, width=240, height=800)
-canvasTyEc.create_rectangle(0, 0, 240, 800, fill='#2f3123', outline='#2f3123')
-canvasTyEc.place(x=961, y=0)
-canvasPmt = ttk.Canvas(win, width=719, height=300)
-canvasPmt.create_rectangle(0, 0, 719, 300, fill='#f1cc7a', outline='#f1cc7a')
-canvasPmt.place(x=241, y=501)
-canvasCaja = ttk.Canvas(win, width=720, height=500)
-canvasCaja.create_rectangle(
-    0, 400, 719, 500, fill='#A18072', outline='#A18072')
+frameMenu = ctk.CTkFrame(win,fg_color='#2f3123',width=240,height=800)
+frameMenu.place(x=0,y=0)
+frameCaja = ctk.CTkFrame(win,fg_color='#A18072',width=720,height=500,corner_radius=0)
+frameCaja.place(x=240,y=0)
+canvasCaja = tk.Canvas(win, width=720, height=400)
 canvasCaja.place(x=241, y=0)
+framePmt = ctk.CTkFrame(win,fg_color='#f1cc7a',width=720,height=300,corner_radius=0)
+framePmt.place(x=240,y=500)
+frameMenuCalc = ctk.CTkFrame(win,fg_color='#2f3123', width=240, height=800,corner_radius=0)
+frameMenuCalc.place(x=960, y=0)
 # -------------------------------------------------------------#
 # Funciones Menu
 # -------------------------------------------------------------#
@@ -48,8 +48,8 @@ def screenshot():
 
 
 def formulas():
-    labelTitleMM = ttk.Label(canvasMenu, text='Modelo Matematico', font=('Times new roman', 18),
-                             foreground='white', background='#2f3123')
+    labelTitleMM = ctk.CTkLabel(frameMenu, text='Modelo Matematico', font=('Times new roman', 18),
+                             text_color='white', fg_color='#2f3123')
     labelTitleMM.place(relx=0.5, anchor='center', y=280)
     choice = selectVar.get()
     if choice == 'FDA':
@@ -232,9 +232,9 @@ def refreshPmt(*args):
         entryV.place_forget()
         labelM.place_forget()
         labelV.place_forget()
-        LabelVi.place_forget()
+        labelVi.place_forget()
         entryVi.place_forget()
-        LabelVf.place_forget()
+        labelVf.place_forget()
         entryVf.place_forget()
     elif choice == 'MV':
         labelM.place(x=180, y=60)
@@ -247,16 +247,16 @@ def refreshPmt(*args):
         entryD.place_forget()
         labelA.place_forget()
         entryA.place_forget()
-        LabelVi.place_forget()
+        labelVi.place_forget()
         entryVi.place_forget()
-        LabelVf.place_forget()
+        labelVf.place_forget()
         entryVf.place_forget()
     elif choice == 'MVF-MVI':
         labelM.place(x=109, y=60)
         entryM.place(x=81, y=90)
-        LabelVi.place(x=270, y=60)
+        labelVi.place(x=270, y=60)
         entryVi.place(x=294, y=90)
-        LabelVf.place(x=490, y=60)
+        labelVf.place(x=490, y=60)
         entryVf.place(x=507, y=90)
         labelF.place_forget()
         entryF.place_forget()
@@ -274,90 +274,90 @@ def refreshPmt(*args):
 # -------------------------------------------------------------#
 # Elementos Menu
 # -------------------------------------------------------------#
-labelTitleM = ttk.Label(canvasMenu, text='Menu',
-                        font=('Times new roman', 20), foreground='white', background='#2f3123')
+labelTitleM = ctk.CTkLabel(frameMenu, text='Menu',
+                        font=('Times new roman', 20), text_color='white')
 labelTitleM.place(relx=0.5, anchor='center', y=50)
-btnSS = ttk.Button(canvasMenu, text="Screenshot", command=screenshot)
+btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot)
 btnSS.place(relx=0.5, anchor='center', y=130)
 # Modelo Matematico
-labelTitleFT = ttk.Label(canvasMenu, text='Del Trabajo', font=('Times new roman', 18),
-                         foreground='white', background='#2f3123')
-labelTitleFEc = ttk.Label(canvasMenu, text='De Energia Cinetica', font=('Times new roman', 18),
-                          foreground='white', background='#2f3123')
-labelTitleVE = ttk.Label(canvasMenu, text='Variacion de energia', font=('Times new roman', 18),
-                         foreground='white', background='#2f3123')
-FT = ttk.Label(canvasMenu, text='W = | F | x | D | x cos a°', font=('Times new roman', 18),
-               foreground='white', background='#2f3123')
-FEc = ttk.Label(canvasMenu, text='Ec = ½m V²', font=('Times new roman', 18),
-                foreground='white', background='#2f3123')
-FWEc = ttk.Label(canvasMenu, text='W = ∆Ec', font=('Times new roman', 18),
-                 foreground='white', background='#2f3123')
-VEc = ttk.Label(canvasMenu, text='∆Ec = Ecf - Eci', font=('Times new roman', 18),
-                foreground='white', background='#2f3123')
-VEc_2 = ttk.Label(canvasMenu, text='∆Ec = ½m Vf² - ½m Vi²', font=('Times new roman', 18),
-                  foreground='white', background='#2f3123')
+labelTitleFT = ctk.CTkLabel(frameMenu, text='Del Trabajo', font=('Times new roman', 18),
+                         text_color='white', fg_color='#2f3123')
+labelTitleFEc = ctk.CTkLabel(frameMenu, text='De Energia Cinetica', font=('Times new roman', 18),
+                          text_color='white', fg_color='#2f3123')
+labelTitleVE = ctk.CTkLabel(frameMenu, text='Variacion de energia', font=('Times new roman', 18),
+                         text_color='white', fg_color='#2f3123')
+FT = ctk.CTkLabel(frameMenu, text='W = | F | x | D | x cos a°', font=('Times new roman', 18),
+               text_color='white', fg_color='#2f3123')
+FEc = ctk.CTkLabel(frameMenu, text='Ec = ½m V²', font=('Times new roman', 18),
+                text_color='white', fg_color='#2f3123')
+FWEc = ctk.CTkLabel(frameMenu, text='W = ∆Ec', font=('Times new roman', 18),
+                 text_color='white', fg_color='#2f3123')
+VEc = ctk.CTkLabel(frameMenu, text='∆Ec = Ecf - Eci', font=('Times new roman', 18),
+                text_color='white', fg_color='#2f3123')
+VEc_2 = ctk.CTkLabel(frameMenu, text='∆Ec = ½m Vf² - ½m Vi²', font=('Times new roman', 18),
+                  text_color='white', fg_color='#2f3123')
 
-labelTitleD = ttk.Label(canvasMenu, text='Donde: \n•W = Trabajo\n•F = Fuerza\n•D = Distancia\n•a = angulo',
-                        font=('Times new roman', 15), foreground='white', background='#2f3123')
-labelTitleD_1 = ttk.Label(canvasMenu, text='Donde: \n•Ec = Energia Cinetica\n•m = Masa\n•V = Velocidad\n',
-                          font=('Times new roman', 15), foreground='white', background='#2f3123')
-labelTitleD_2 = ttk.Label(canvasMenu, text='Donde: \n•∆Ec = Variacion\nde energia cinetica\n•Ecf = Energia\nCinetica Final\n•Eci = Energia\nCinetica Inicial\n•m = Masa\n•Vf = Velociad final\n•Vi = Velocidad Inicial',
-                          font=('Times new roman', 15), foreground='white', background='#2f3123')
+labelTitleD = ctk.CTkLabel(frameMenu, text='Donde: \n•W = Trabajo\n•F = Fuerza\n•D = Distancia\n•a = angulo',
+                        font=('Times new roman', 15), text_color='white', fg_color='#2f3123')
+labelTitleD_1 = ctk.CTkLabel(frameMenu, text='Donde: \n•Ec = Energia Cinetica\n•m = Masa\n•V = Velocidad\n',
+                          font=('Times new roman', 15), text_color='white', fg_color='#2f3123')
+labelTitleD_2 = ctk.CTkLabel(frameMenu, text='Donde: \n•∆Ec = Variacion\nde energia cinetica\n•Ecf = Energia\nCinetica Final\n•Eci = Energia\nCinetica Inicial\n•m = Masa\n•Vf = Velociad final\n•Vi = Velocidad Inicial',
+                          font=('Times new roman', 15), text_color='white', fg_color='#2f3123')
 # -------------------------------------------------------------#
 # Elementos Caja
 # -------------------------------------------------------------#
 posIniX = 271
 posIniY = 250
-labelFN = ttk.Label(canvasCaja, text='',
-                    font=('Times new roman', 15))
-labelDl = ttk.Label(canvasCaja,text='Desplazamiento: ',font=('Times new roman',15))
-ButtonRun = ttk.Button(canvasCaja, text='Run', command=BtnRun, style='primary')
-canvasCaja.create_window(360, 450, window=ButtonRun, width=100, height=40)
+labelFN = ctk.CTkLabel(canvasCaja, text='',
+                    font=('Times new roman', 15),text_color='black')
+labelDl = ctk.CTkLabel(canvasCaja,text='Desplazamiento: ',font=('Times new roman',15),text_color='black')
+btnRun = ctk.CTkButton(frameMenu, text='Run', command=BtnRun)
+btnRun.place(relx=0.5,y=180, anchor= 'center')
 fig = canvasCaja.create_rectangle(
     posIniX, posIniY, 451, 400, fill='#ff6a36', outline='#ff6a36')
 # -------------------------------------------------------------#
 # Elementos Parametros
 # -------------------------------------------------------------#
-entryF = ttk.Entry(canvasPmt)
-entryD = ttk.Entry(canvasPmt)
-entryA = ttk.Entry(canvasPmt)
-entryM = ttk.Entry(canvasPmt)
-entryV = ttk.Entry(canvasPmt)
-entryVi = ttk.Entry(canvasPmt)
-entryVf = ttk.Entry(canvasPmt)
-labelF = ttk.Label(canvasPmt, text='Fuerza (N)', font=('Times new roman', 15),
-                   foreground='black', background='#f1cc7a')
-labelD = ttk.Label(canvasPmt, text='Desplazamiento (m)', font=('Times new roman', 15),
-                   foreground='black', background='#f1cc7a')
-labelA = ttk.Label(canvasPmt, text='Angulo (°) ', font=('Times new roman', 15),
-                   foreground='black', background='#f1cc7a')
-labelM = ttk.Label(canvasPmt, text='Masa (kg)', font=('Times new roman', 15),
-                   foreground='black', background='#f1cc7a')
-labelV = ttk.Label(canvasPmt, text='Velocidad (m/s²)', font=('Times new roman', 15),
-                   foreground='black', background='#f1cc7a')
-labelR = ttk.Label(canvasPmt, text="Resultado:", font=('Times new roman', 15),
-                   foreground='black', background='#f1cc7a')
-LabelVi = ttk.Label(canvasPmt, text='Velocidad Inicial (m/s²)', font=('Times new roman', 15),
-                    foreground='black', background='#f1cc7a')
-LabelVf = ttk.Label(canvasPmt, text='Velocidad Final (m/s²)', font=('Times new roman', 15),
-                    foreground='black', background='#f1cc7a')
+entryF = ctk.CTkEntry(framePmt)
+entryD = ctk.CTkEntry(framePmt)
+entryA = ctk.CTkEntry(framePmt)
+entryM = ctk.CTkEntry(framePmt)
+entryV = ctk.CTkEntry(framePmt)
+entryVi = ctk.CTkEntry(framePmt)
+entryVf = ctk.CTkEntry(framePmt)
+labelF = ctk.CTkLabel(framePmt, text='Fuerza (N)', font=('Times new roman', 15),
+                   text_color='black', fg_color='#f1cc7a')
+labelD = ctk.CTkLabel(framePmt, text='Desplazamiento (m)', font=('Times new roman', 15),
+                   text_color='black', fg_color='#f1cc7a')
+labelA = ctk.CTkLabel(framePmt, text='Angulo (°) ', font=('Times new roman', 15),
+                   text_color='black', fg_color='#f1cc7a')
+labelM = ctk.CTkLabel(framePmt, text='Masa (kg)', font=('Times new roman', 15),
+                   text_color='black', fg_color='#f1cc7a')
+labelV = ctk.CTkLabel(framePmt, text='Velocidad (m/s²)', font=('Times new roman', 15),
+                   text_color='black', fg_color='#f1cc7a')
+labelR = ctk.CTkLabel(framePmt, text="Resultado:", font=('Times new roman', 15),
+                   text_color='black', fg_color='#f1cc7a')
+labelVi = ctk.CTkLabel(framePmt, text='Velocidad Inicial (m/s²)', font=('Times new roman', 15),
+                    text_color='black', fg_color='#f1cc7a')
+labelVf = ctk.CTkLabel(framePmt, text='Velocidad Final (m/s²)', font=('Times new roman', 15),
+                    text_color='black', fg_color='#f1cc7a')
 # -------------------------------------------------------------#
 # Elementos Menu Calculos
 # -------------------------------------------------------------#
-labelTitleTyEc = ttk.Label(canvasTyEc, text='¿Que desea calcular?', font=('Times new roman', 20),
-                           foreground='white', background='#2f3123')
+labelTitleTyEc = ctk.CTkLabel(frameMenuCalc, text='¿Que desea calcular?', font=('Times new roman', 20),
+                           text_color='white', fg_color='#2f3123')
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
 
-labelTitleC = ttk.Label(canvasCaja, text='TRABAJO Y ENERGIA', font=('Times new roman', 25),
-                        foreground='black')
+labelTitleC = ctk.CTkLabel(canvasCaja, text='TRABAJO Y ENERGIA', font=('Times new roman', 25),
+                        text_color='black')
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 selectVar = tk.StringVar()
-rbtn1 = ttk.Radiobutton(
-    canvasTyEc, text='Calcular Trabajo : ', value='FDA', variable=selectVar, command=formulas)
-rbtn2 = ttk.Radiobutton(
-    canvasTyEc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar, command=formulas)
-rbtn3 = ttk.Radiobutton(
-    canvasTyEc, text='Variacion de energia: ', value='MVF-MVI', variable=selectVar, command=formulas)
+rbtn1 = ctk.CTkRadioButton(
+    frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar, command=formulas)
+rbtn2 = ctk.CTkRadioButton(
+    frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar, command=formulas)
+rbtn3 = ctk.CTkRadioButton(
+    frameMenuCalc, text='Variacion de energia: ', value='MVF-MVI', variable=selectVar, command=formulas)
 rbtn1.place(x=30, y=100)
 rbtn2.place(x=30, y=140)
 rbtn3.place(x=30, y=180)
