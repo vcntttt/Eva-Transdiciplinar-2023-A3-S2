@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox as msg
-# import ttkbootstrap as ttk
 import customtkinter as ctk
 import time
 import math
@@ -20,23 +19,29 @@ win.title('Proyecto Transdiciplinario: Trabajo y Energia')
 win.iconbitmap('icon.ico')
 win.geometry(f'{nRes[0]}x{nRes[1]}')
 win.resizable(False, False)
+fuente = ctk.CTkFont(family='Times New Roman', size=12)
 # -----------------------------------------------------------#
 # Init Canvas
 # -----------------------------------------------------------#
-frameMenu = ctk.CTkFrame(win,fg_color='#2f3123',width=240,height=800)
-frameMenu.place(x=0,y=0)
-frameCaja = ctk.CTkFrame(win,fg_color='#A18072',width=720,height=500,corner_radius=0)
-frameCaja.place(x=240,y=0)
+frameMenu = ctk.CTkFrame(win, fg_color='#2f3123', width=240, height=800)
+frameMenu.place(x=0, y=0)
+frameCaja = ctk.CTkFrame(win, fg_color='#A18072',
+                         width=720, height=500, corner_radius=0)
+frameCaja.place(x=240, y=0)
 canvasCaja = tk.Canvas(win, width=720, height=400)
 canvasCaja.place(x=241, y=0)
-framePmt = ctk.CTkFrame(win,fg_color='#f1cc7a',width=720,height=300,corner_radius=0)
-framePmt.place(x=240,y=500)
-frameMenuCalc = ctk.CTkFrame(win,fg_color='#2f3123', width=240, height=800,corner_radius=0)
+framePmt = ctk.CTkFrame(win, fg_color='#f1cc7a',
+                        width=720, height=300, corner_radius=0)
+framePmt.place(x=240, y=500)
+frameMenuCalc = ctk.CTkFrame(
+    win, fg_color='#2f3123', width=240, height=800, corner_radius=0)
 frameMenuCalc.place(x=960, y=0)
 # -------------------------------------------------------------#
 # Funciones Menu
 # -------------------------------------------------------------#
 contador = 1
+
+
 def screenshot():
     global contador
     x = win.winfo_rootx()
@@ -47,55 +52,15 @@ def screenshot():
     return
 
 
-def formulas():
-    labelTitleMM = ctk.CTkLabel(frameMenu, text='Modelo Matematico', font=('Times new roman', 18),
-                             text_color='white', fg_color='#2f3123')
-    labelTitleMM.place(relx=0.5, anchor='center', y=280)
-    choice = selectVar.get()
-    if choice == 'FDA':
-        labelTitleFT.place(relx=0.5, anchor='center', y=320)
-        FT.place(relx=0.5, anchor='center', y=380)
-        labelTitleD.place(x=10, y=420)
-        labelTitleFEc.place_forget()
-        labelTitleVE.place_forget()
-        FEc.place_forget()
-        FWEc.place_forget()
-        VEc.place_forget()
-        VEc_2.place_forget()
-        labelTitleD_1.place_forget()
-        labelTitleD_2.place_forget()
-    elif choice == 'MV':
-        labelTitleFEc.place(relx=0.5, anchor='center', y=320)
-        FEc.place(relx=0.5, anchor='center', y=380)
-        labelTitleD_1.place(x=10, y=420)
-        labelTitleFT.place_forget()
-        labelTitleVE.place_forget()
-        FT.place_forget()
-        FWEc.place_forget()
-        VEc.place_forget()
-        VEc_2.place_forget()
-        labelTitleD.place_forget()
-        labelTitleD_2.place_forget()
-    elif choice == 'MVF-MVI':
-        labelTitleVE.place(relx=0.5, anchor='center', y=320)
-        FWEc.place(relx=0.5, anchor='center', y=380)
-        VEc.place(relx=0.5, anchor='center', y=420)
-        VEc_2.place(relx=0.5, anchor='center', y=460)
-        labelTitleD_2.place(x=10, y=510)
-        labelTitleFEc.place_forget()
-        labelTitleFT.place_forget()
-        FEc.place_forget()
-        FT.place_forget()
-        labelTitleD.place_forget()
-        labelTitleD_1.place_forget()
-    return formulas
+def formulas(*args):
+    return
 
 # -------------------------------------------------------------#
 # Funciones Caja
 # -------------------------------------------------------------#
 
 
-def mueveCaja(resultado,direccion):
+def mueveCaja(resultado, direccion):
     desplazamiento = resultado * 1000
     disRecorrida = 0
     while disRecorrida < desplazamiento:
@@ -116,8 +81,8 @@ def BtnRun():
     resultado = float(calc()[9])
     direccion = float(calc()[10])
     posIni()
-    PintaLinea(resultado,direccion)
-    mueveCaja(resultado,direccion)
+    PintaLinea(resultado, direccion)
+    mueveCaja(resultado, direccion)
 
 
 def posIni():
@@ -130,28 +95,79 @@ def posIni():
         canvasCaja.move(fig, despX, 0)
 
 
-def PintaLinea(resultado,direccion):
+def PintaLinea(resultado, direccion):
     choice = selectVar.get()
     canvasCaja.delete('linea')
     if resultado:
         canvasCaja.create_line(
             275, 200, 411, 200, fill='black', width=3, tags='linea')
-        canvasCaja.create_window(350, 150, window=labelFN,tags='linea')
+        canvasCaja.create_window(350, 150, window=labelFN, tags='linea')
         if direccion > 0:
             canvasCaja.create_polygon(
-            411, 200, 391, 190, 391, 210, fill='black', tags='linea')
+                411, 200, 391, 190, 391, 210, fill='black', tags='linea')
     elif direccion < 0:
         canvasCaja.create_polygon(
             275, 200, 295, 190, 295, 210, fill='black', tags='linea')
     else:
         return
-    if choice == 'FDA': 
-        canvasCaja.create_window(350,100,window=labelDl,tags='linea')
+    if choice == 'FDA':
+        canvasCaja.create_window(350, 100, window=labelDl, tags='linea')
 
+    return
+
+def stop():
+    posIni()
+    return
+
+posX = None
+def movManual():
+    move = toggleManual.get()
+    if move == 1:
+        canvasCaja.bind('<Button-1>', pickBox)
+        canvasCaja.bind('<B1-Motion>', moveOn)
+        canvasCaja.bind('<ButtonRelease-1>',letItgo)
+    else:
+        posIni()
+        canvasCaja.unbind('<Button-1>')
+        canvasCaja.unbind('<B1-Motion>')
+        canvasCaja.unbind('<ButtonRelease-1>')
+    return
+
+def pickBox(event):
+    global posX
+    x1,y1,x2,y2 = canvasCaja.coords(fig)
+    if x1 <= event.x <= x2 and y1 <= event.y <= y2:
+        posX = event.x
+    return
+
+desp = 0
+def moveOn(event):
+    global posX,desp
+    if posX is not None:
+        x1,y2,x2,y2 = canvasCaja.coords(fig)
+        despX = event.x - posX
+        newX1 = x1 + despX
+        newX2 = x2 + despX
+        if newX1 >= 0 and newX2 <= canvasCaja.winfo_width():
+            desp += 1
+            labelDl.place(x= 320, y= 200)
+            labelDl.configure(text = f'Desplazamiento: {desp}')
+            canvasCaja.move(fig,despX,0)
+            posX = event.x
+    return
+
+def letItgo(event):
+    global posX
+    posX = None
+    return
+
+def calcInv(desplazamiento):
     return
 # -------------------------------------------------------------#
 # Funciones Parametros
 # -------------------------------------------------------------#
+
+
 def calc():
     choice = refreshPmt()
     f = d = aG = aR = m = v = vi = vf = 0
@@ -187,7 +203,7 @@ def calc():
             if v < 0:
                 dire = -1
             elif v > 0:
-                dire = 1    
+                dire = 1
             eC = abs(eC)
             rType = 'Energia Cinetica'
             rNum = eC
@@ -215,7 +231,7 @@ def calc():
         rNum = resultadoF
     else:
         labelFN.configure(text=f'{rType}: {int(rNum)} J')
-    valores = [f, d, aG, aR, m, v, vi, vf, rType, rNum,dire]
+    valores = [f, d, aG, aR, m, v, vi, vf, rType, rNum, dire]
     return valores
 
 
@@ -275,46 +291,28 @@ def refreshPmt(*args):
 # Elementos Menu
 # -------------------------------------------------------------#
 labelTitleM = ctk.CTkLabel(frameMenu, text='Menu',
-                        font=('Times new roman', 20), text_color='white')
+                            text_color='white')
 labelTitleM.place(relx=0.5, anchor='center', y=50)
 btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot)
 btnSS.place(relx=0.5, anchor='center', y=130)
+btnRun = ctk.CTkButton(frameMenu, text='Run', command=BtnRun)
+btnStop = ctk.CTkButton(frameMenu,text='Detener',command=stop)
+btnRun.place(relx=0.5, y=180, anchor='center')
+btnStop.place(relx = 0.5,y = 230,anchor = 'center')
 # Modelo Matematico
-labelTitleFT = ctk.CTkLabel(frameMenu, text='Del Trabajo', font=('Times new roman', 18),
-                         text_color='white', fg_color='#2f3123')
-labelTitleFEc = ctk.CTkLabel(frameMenu, text='De Energia Cinetica', font=('Times new roman', 18),
-                          text_color='white', fg_color='#2f3123')
-labelTitleVE = ctk.CTkLabel(frameMenu, text='Variacion de energia', font=('Times new roman', 18),
-                         text_color='white', fg_color='#2f3123')
-FT = ctk.CTkLabel(frameMenu, text='W = | F | x | D | x cos a°', font=('Times new roman', 18),
-               text_color='white', fg_color='#2f3123')
-FEc = ctk.CTkLabel(frameMenu, text='Ec = ½m V²', font=('Times new roman', 18),
-                text_color='white', fg_color='#2f3123')
-FWEc = ctk.CTkLabel(frameMenu, text='W = ∆Ec', font=('Times new roman', 18),
-                 text_color='white', fg_color='#2f3123')
-VEc = ctk.CTkLabel(frameMenu, text='∆Ec = Ecf - Eci', font=('Times new roman', 18),
-                text_color='white', fg_color='#2f3123')
-VEc_2 = ctk.CTkLabel(frameMenu, text='∆Ec = ½m Vf² - ½m Vi²', font=('Times new roman', 18),
-                  text_color='white', fg_color='#2f3123')
-
-labelTitleD = ctk.CTkLabel(frameMenu, text='Donde: \n•W = Trabajo\n•F = Fuerza\n•D = Distancia\n•a = angulo',
-                        font=('Times new roman', 15), text_color='white', fg_color='#2f3123')
-labelTitleD_1 = ctk.CTkLabel(frameMenu, text='Donde: \n•Ec = Energia Cinetica\n•m = Masa\n•V = Velocidad\n',
-                          font=('Times new roman', 15), text_color='white', fg_color='#2f3123')
-labelTitleD_2 = ctk.CTkLabel(frameMenu, text='Donde: \n•∆Ec = Variacion\nde energia cinetica\n•Ecf = Energia\nCinetica Final\n•Eci = Energia\nCinetica Inicial\n•m = Masa\n•Vf = Velociad final\n•Vi = Velocidad Inicial',
-                          font=('Times new roman', 15), text_color='white', fg_color='#2f3123')
 # -------------------------------------------------------------#
 # Elementos Caja
 # -------------------------------------------------------------#
 posIniX = 271
 posIniY = 250
+labelTitleC = ctk.CTkLabel(canvasCaja, text='TRABAJO Y ENERGIA', 
+                           text_color='black')
 labelFN = ctk.CTkLabel(canvasCaja, text='',
-                    font=('Times new roman', 15),text_color='black')
-labelDl = ctk.CTkLabel(canvasCaja,text='Desplazamiento: ',font=('Times new roman',15),text_color='black')
-btnRun = ctk.CTkButton(frameMenu, text='Run', command=BtnRun)
-btnRun.place(relx=0.5,y=180, anchor= 'center')
+                        text_color='black')
+labelDl = ctk.CTkLabel(canvasCaja, text='Desplazamiento: ', font=(
+    'Times new roman', 15), text_color='black')
 fig = canvasCaja.create_rectangle(
-    posIniX, posIniY, 451, 400, fill='#ff6a36', outline='#ff6a36')
+    posIniX, posIniY, 451, 400, fill='#ff6a36')
 # -------------------------------------------------------------#
 # Elementos Parametros
 # -------------------------------------------------------------#
@@ -325,41 +323,46 @@ entryM = ctk.CTkEntry(framePmt)
 entryV = ctk.CTkEntry(framePmt)
 entryVi = ctk.CTkEntry(framePmt)
 entryVf = ctk.CTkEntry(framePmt)
-labelF = ctk.CTkLabel(framePmt, text='Fuerza (N)', font=('Times new roman', 15),
-                   text_color='black', fg_color='#f1cc7a')
-labelD = ctk.CTkLabel(framePmt, text='Desplazamiento (m)', font=('Times new roman', 15),
-                   text_color='black', fg_color='#f1cc7a')
-labelA = ctk.CTkLabel(framePmt, text='Angulo (°) ', font=('Times new roman', 15),
-                   text_color='black', fg_color='#f1cc7a')
-labelM = ctk.CTkLabel(framePmt, text='Masa (kg)', font=('Times new roman', 15),
-                   text_color='black', fg_color='#f1cc7a')
-labelV = ctk.CTkLabel(framePmt, text='Velocidad (m/s²)', font=('Times new roman', 15),
-                   text_color='black', fg_color='#f1cc7a')
-labelR = ctk.CTkLabel(framePmt, text="Resultado:", font=('Times new roman', 15),
-                   text_color='black', fg_color='#f1cc7a')
-labelVi = ctk.CTkLabel(framePmt, text='Velocidad Inicial (m/s²)', font=('Times new roman', 15),
-                    text_color='black', fg_color='#f1cc7a')
-labelVf = ctk.CTkLabel(framePmt, text='Velocidad Final (m/s²)', font=('Times new roman', 15),
-                    text_color='black', fg_color='#f1cc7a')
+labelF = ctk.CTkLabel(framePmt, text='Fuerza (N)', 
+                      text_color='black', fg_color='#f1cc7a')
+labelD = ctk.CTkLabel(framePmt, text='Desplazamiento (m)', 
+                      text_color='black', fg_color='#f1cc7a')
+labelA = ctk.CTkLabel(framePmt, text='Angulo (°) ', 
+                      text_color='black', fg_color='#f1cc7a')
+labelM = ctk.CTkLabel(framePmt, text='Masa (kg)', 
+                      text_color='black', fg_color='#f1cc7a')
+labelV = ctk.CTkLabel(framePmt, text='Velocidad (m/s²)', 
+                      text_color='black', fg_color='#f1cc7a')
+labelR = ctk.CTkLabel(framePmt, text="Resultado:", 
+                      text_color='black', fg_color='#f1cc7a')
+labelVi = ctk.CTkLabel(framePmt, text='Velocidad Inicial (m/s²)', 
+                       text_color='black', fg_color='#f1cc7a')
+labelVf = ctk.CTkLabel(framePmt, text='Velocidad Final (m/s²)', 
+                       text_color='black', fg_color='#f1cc7a')
 # -------------------------------------------------------------#
 # Elementos Menu Calculos
 # -------------------------------------------------------------#
-labelTitleTyEc = ctk.CTkLabel(frameMenuCalc, text='¿Que desea calcular?', font=('Times new roman', 20),
-                           text_color='white', fg_color='#2f3123')
-labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
+labelTitleTyEc = ctk.CTkLabel(frameMenuCalc, text='¿Que desea calcular?', 
+                              text_color='white', fg_color='#2f3123')
 
-labelTitleC = ctk.CTkLabel(canvasCaja, text='TRABAJO Y ENERGIA', font=('Times new roman', 25),
-                        text_color='black')
-labelTitleC.place(relx=0.5, anchor='center', y=50)
 selectVar = tk.StringVar()
+toggleManual = tk.IntVar()
 rbtn1 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar, command=formulas)
+    frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar)
 rbtn2 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar, command=formulas)
+    frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar)
 rbtn3 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Variacion de energia: ', value='MVF-MVI', variable=selectVar, command=formulas)
+    frameMenuCalc, text='Variacion de energia: ', value='MVF-MVI', variable=selectVar)
+rbtn4 = ctk.CTkSwitch(
+    frameMenuCalc, text='Desplazamiento manual',command=movManual,variable=toggleManual,onvalue=1,offvalue=0)
+rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce')
+labelTitleC.place(relx=0.5, anchor='center', y=50)
+labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
 rbtn1.place(x=30, y=100)
 rbtn2.place(x=30, y=140)
 rbtn3.place(x=30, y=180)
+rbtn4.place(x=30, y=220)
+rbtn5.place(x=30, y=260)
 selectVar.trace('w', refreshPmt)
+selectVar.trace('w', formulas)
 win.mainloop()
