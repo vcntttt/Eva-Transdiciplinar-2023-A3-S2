@@ -25,11 +25,8 @@ fuente = ctk.CTkFont(family='Times New Roman', size=12)
 # -----------------------------------------------------------#
 frameMenu = ctk.CTkFrame(win, fg_color='#2f3123', width=240, height=800)
 frameMenu.place(x=0, y=0)
-frameCaja = ctk.CTkFrame(win, fg_color='#A18072',
-                         width=720, height=500, corner_radius=0)
-frameCaja.place(x=240, y=0)
-canvasCaja = tk.Canvas(win, width=720, height=400)
-canvasCaja.place(x=241, y=0)
+canvasCaja = tk.Canvas(win, width=720, height=500)
+canvasCaja.place(x=240, y=0)
 framePmt = ctk.CTkFrame(win, fg_color='#f1cc7a',
                         width=720, height=300, corner_radius=0)
 framePmt.place(x=240, y=500)
@@ -60,9 +57,12 @@ def formulas(*args):
 # -------------------------------------------------------------#
 
 
-def mueveCaja(resultado, direccion):
+def mueveCaja(resultado =0, direccion = 1,velocidad = 1):
+    choice = selectVar.get()
     desplazamiento = resultado * 1000
     disRecorrida = 0
+    velTime = velocidad / 10000
+    print(f'velocidad: {velTime}')
     while disRecorrida < desplazamiento:
         coords = canvasCaja.coords(fig)
         esqDer = coords[2] + direccion
@@ -73,27 +73,37 @@ def mueveCaja(resultado, direccion):
             posIni()
             break
         canvasCaja.update()
-        time.sleep(0.01)
+        time.sleep(velTime)
     return
 
 
 def BtnRun():
-    resultado = float(calc()[9])
-    direccion = float(calc()[10])
-    posIni()
-    PintaLinea(resultado, direccion)
-    mueveCaja(resultado, direccion)
-
+    choice = selectVar.get()
+    if choice != 'Manual':
+        values = calc()
+        resultado = float(values[9])
+        direccion = float(values[10])
+        velocidad = float(values[5])
+        posIni()
+        PintaLinea(resultado, direccion)
+        mueveCaja(resultado, direccion, velocidad)
+    else:
+        print(choice)
 
 def posIni():
-    coords = canvasCaja.coords(fig)
-    if coords[0] != posIniX:
-        if coords[0] > posIniX:
-            despX = -(abs(coords[0]-posIniX))
+    choice = selectVar.get()
+    x1,y1,x2,y2 = canvasCaja.coords(fig)
+    posI = 0
+    if choice == 'FDA' or choice == 'MV':
+        posI = posIniX
+    elif choice == 'VEc' or choice == 'Manual':
+        posI = 0
+    if x1 != posI:            
+        if x1 > posI:
+            despX = -(abs(x1-posI))
         else:
-            despX = abs(coords[0]-posIniX)
+            despX = abs(x1-posI)
         canvasCaja.move(fig, despX, 0)
-
 
 def PintaLinea(resultado, direccion):
     choice = selectVar.get()
@@ -112,7 +122,6 @@ def PintaLinea(resultado, direccion):
         return
     if choice == 'FDA':
         canvasCaja.create_window(350, 100, window=labelDl, tags='linea')
-
     return
 
 def stop():
@@ -120,9 +129,9 @@ def stop():
     return
 
 posX = None
-def movManual():
-    move = toggleManual.get()
-    if move == 1:
+def toggleMovManual(*args):
+    choice = selectVar.get()
+    if choice == 'Manual':
         canvasCaja.bind('<Button-1>', pickBox)
         canvasCaja.bind('<B1-Motion>', moveOn)
         canvasCaja.bind('<ButtonRelease-1>',letItgo)
@@ -149,11 +158,14 @@ def moveOn(event):
         newX1 = x1 + despX
         newX2 = x2 + despX
         if newX1 >= 0 and newX2 <= canvasCaja.winfo_width():
-            desp += 1
+            desp = abs(x1-posIniX) 
             labelDl.place(x= 320, y= 200)
-            labelDl.configure(text = f'Desplazamiento: {desp}')
+            labelDl.configure(text = f'Desplazamiento: {int(desp)} metros')
+            calcInv(desp)
             canvasCaja.move(fig,despX,0)
             posX = event.x
+            if desp > 260:
+                return
     return
 
 def letItgo(event):
@@ -162,6 +174,15 @@ def letItgo(event):
     return
 
 def calcInv(desplazamiento):
+    choice = selectVar.get()
+    try:
+        fuerza = float(entryF.get())
+        trabajo = fuerza * desplazamiento
+        print(f'Trabajo: {trabajo}')
+
+    except ValueError:
+        msg.showerror(
+                'Valores incompletos', 'Porfavor ingresar todos los valores solicitados')
     return
 # -------------------------------------------------------------#
 # Funciones Parametros
@@ -169,7 +190,7 @@ def calcInv(desplazamiento):
 
 
 def calc():
-    choice = refreshPmt()
+    choice = selectVar.get()
     f = d = aG = aR = m = v = vi = vf = 0
     dire = 1
     rType = 'Resultado'
@@ -211,7 +232,7 @@ def calc():
         except ValueError:
             msg.showerror(
                 'Valores incompletos', 'Porfavor ingresar todos los valores solicitados')
-    elif choice == 'MVF-MVI':
+    elif choice == 'VEc':
         try:
             m = float(entryM.get())
             vf = float(entryVf.get())
@@ -237,6 +258,8 @@ def calc():
 
 def refreshPmt(*args):
     choice = selectVar.get()
+    posIni()
+    canvasCaja.delete('linea')
     if choice == 'FDA':
         labelF.place(x=100, y=60)
         entryF.place(x=81, y=90)
@@ -245,8 +268,8 @@ def refreshPmt(*args):
         labelA.place(x=525, y=60)
         entryA.place(x=507, y=90)
         entryM.place_forget()
-        entryV.place_forget()
         labelM.place_forget()
+        entryV.place_forget()
         labelV.place_forget()
         labelVi.place_forget()
         entryVi.place_forget()
@@ -267,7 +290,7 @@ def refreshPmt(*args):
         entryVi.place_forget()
         labelVf.place_forget()
         entryVf.place_forget()
-    elif choice == 'MVF-MVI':
+    elif choice == 'VEc':
         labelM.place(x=109, y=60)
         entryM.place(x=81, y=90)
         labelVi.place(x=270, y=60)
@@ -282,9 +305,20 @@ def refreshPmt(*args):
         entryA.place_forget()
         entryV.place_forget()
         labelV.place_forget()
+    elif choice == 'Manual':
+        labelF.place(relx = 0.4, y = 60)
+        entryF.place(relx = 0.4, y = 90)
+        labelD.place_forget()
+        entryD.place_forget()
         labelA.place_forget()
         entryA.place_forget()
-    return choice
+        entryV.place_forget()
+        labelV.place_forget()
+        labelVi.place_forget()
+        entryVi.place_forget()
+        labelVf.place_forget()
+        entryVf.place_forget()
+    return 
 
 
 # -------------------------------------------------------------#
@@ -313,6 +347,7 @@ labelDl = ctk.CTkLabel(canvasCaja, text='Desplazamiento: ', font=(
     'Times new roman', 15), text_color='black')
 fig = canvasCaja.create_rectangle(
     posIniX, posIniY, 451, 400, fill='#ff6a36')
+suelo = canvasCaja.create_rectangle(0,400,720,500,fill='#A18072',outline='#A18072')
 # -------------------------------------------------------------#
 # Elementos Parametros
 # -------------------------------------------------------------#
@@ -352,9 +387,9 @@ rbtn1 = ctk.CTkRadioButton(
 rbtn2 = ctk.CTkRadioButton(
     frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar)
 rbtn3 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Variacion de energia: ', value='MVF-MVI', variable=selectVar)
-rbtn4 = ctk.CTkSwitch(
-    frameMenuCalc, text='Desplazamiento manual',command=movManual,variable=toggleManual,onvalue=1,offvalue=0)
+    frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar)
+rbtn4 = ctk.CTkRadioButton(
+    frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual')
 rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce')
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
@@ -365,4 +400,6 @@ rbtn4.place(x=30, y=220)
 rbtn5.place(x=30, y=260)
 selectVar.trace('w', refreshPmt)
 selectVar.trace('w', formulas)
+selectVar.trace('w', toggleMovManual)
+
 win.mainloop()
