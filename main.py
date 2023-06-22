@@ -320,7 +320,52 @@ def refreshPmt(*args):
         entryVf.place_forget()
     return 
 
+# -------------------------------------------------------------#
+# Funciones Parametros - Roce
+# -------------------------------------------------------------#
+def getRoce():
+    roce = checkRoce.get()
+    if roce == 1:
+        labelMC.place(x=143, y=100)
+        materialCaja.place(x=143, y=170)
+        labelMS.place(x=431, y=100)
+        materialSuelo.place(x=431, y=170)
+        labelRr.place(x=294, y=140)
+    else:
+        labelMC.place_forget()
+        materialCaja.place_forget()
+        labelMS.place_forget()
+        materialSuelo.place_forget()
+        labelRr.place_forget()
+    return
 
+def getCoefRoce(event):
+    caja = materialCaja.get()
+    suelo = materialSuelo.get()
+    coeficiente = calcRoce(caja, suelo)
+    if coeficiente:
+        labelRr.configure(text=f'El coeficiente de roce es {coeficiente}')
+    return
+
+def calcRoce(caja, suelo):
+    if caja == 'Madera' and suelo == 'Madera':
+        return 0.45
+    elif caja == 'Madera' and suelo == 'Acero':
+        return 0.5
+    elif caja == 'Madera' and suelo == 'Cobre':
+        return 0.45
+    elif caja == 'Acero' and suelo == 'Madera':
+        return 0.5
+    elif caja == 'Acero' and suelo == 'Acero':
+        return 0.55
+    elif caja == 'Acero' and suelo == 'Cobre':
+        return 0.4
+    elif caja == 'Cobre' and suelo == 'Madera':
+        return 0.45
+    elif caja == 'Cobre' and suelo == 'Acero':
+        return 0.4
+    elif caja == 'Cobre' and suelo == 'Cobre':
+        return 0.4
 # -------------------------------------------------------------#
 # Elementos Menu
 # -------------------------------------------------------------#
@@ -382,6 +427,7 @@ labelTitleTyEc = ctk.CTkLabel(frameMenuCalc, text='¿Que desea calcular?',
 
 selectVar = tk.StringVar()
 toggleManual = tk.IntVar()
+checkRoce = tk.IntVar(value=0)
 rbtn1 = ctk.CTkRadioButton(
     frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar)
 rbtn2 = ctk.CTkRadioButton(
@@ -390,7 +436,7 @@ rbtn3 = ctk.CTkRadioButton(
     frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar)
 rbtn4 = ctk.CTkRadioButton(
     frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual')
-rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce')
+rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', command=getRoce, variable=checkRoce)
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
 rbtn1.place(x=30, y=100)
@@ -401,5 +447,13 @@ rbtn5.place(x=30, y=260)
 selectVar.trace('w', refreshPmt)
 selectVar.trace('w', formulas)
 selectVar.trace('w', toggleMovManual)
-
+# -------------------------------------------------------------#
+# Elementos Roce
+# -------------------------------------------------------------#
+labelMC = ctk.CTkLabel(framePmt, text='Material Caja',text_color='black')
+labelMS = ctk.CTkLabel(framePmt, text='Material Suelo',text_color='black')
+materiales = ['Madera', 'Acero', 'Cobre']
+materialCaja = ctk.CTkComboBox(framePmt, values=materiales, state='readonly')
+materialSuelo = ctk.CTkComboBox(framePmt, values=materiales, state='readonly')
+labelRr = ctk.CTkLabel(framePmt, text=f'El coeficiente de roce es {0}',text_color='black')
 win.mainloop()
