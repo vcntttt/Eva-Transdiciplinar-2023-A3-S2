@@ -51,7 +51,14 @@ def screenshot():
 
 def formulas(*args):
     return
-
+def toggleTheme(): #Not work
+    theme = win._get_appearance_mode()
+    print(theme)
+    if theme == 'light':
+        win.set_appearance_mode('dark')
+    else:
+        win.set_appearance_mode('light')
+    win.update()
 # -------------------------------------------------------------#
 # Funciones Caja
 # -------------------------------------------------------------#
@@ -188,10 +195,12 @@ def calcInv(desplazamiento):
 # Funciones Parametros
 # -------------------------------------------------------------#
 
-
+coeficiente = 0
 def calc():
+    global coeficiente
     choice = selectVar.get()
     f = d = aG = aR = m = v = vi = vf = 0
+    u = coeficiente
     dire = 1
     rType = 'Resultado'
     rNum = 0
@@ -258,114 +267,73 @@ def calc():
 
 def refreshPmt(*args):
     choice = selectVar.get()
+    roce = checkRoce.get()
     posIni()
     canvasCaja.delete('linea')
+    widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelMC,materialCaja,labelMS,materialSuelo,labelRr]
+    for widget in widgetsForget:
+        widget.place_forget()
+    if roce == 1:
+        x = [0.4,0.7,0.7,0.6]
+        y = [50,80,110,140]
+        labelMC.place(relx=0.1, y= 50)
+        materialCaja.place(relx=0.1,y= 80)
+        labelMS.place(relx=0.1, y=150)
+        materialSuelo.place(relx=0.1,y=180)
+        labelRr.place(relx=0.1, y=250)
+    else:
+        x = [0.2,0.5,0.6,0.4]
+        y = [50,80,110,140]
     if choice == 'FDA':
-        labelF.place(x=100, y=60)
-        entryF.place(x=81, y=90)
-        labelD.place(x=290, y=60)
-        entryD.place(x=294, y=90)
-        labelA.place(x=525, y=60)
-        entryA.place(x=507, y=90)
-        entryM.place_forget()
-        labelM.place_forget()
-        entryV.place_forget()
-        labelV.place_forget()
-        labelVi.place_forget()
-        entryVi.place_forget()
-        labelVf.place_forget()
-        entryVf.place_forget()
-    elif choice == 'MV':
-        labelM.place(x=180, y=60)
-        entryM.place(x=152, y=90)
-        labelV.place(x=436, y=60)
-        entryV.place(x=436, y=90)
-        labelF.place_forget()
-        entryF.place_forget()
-        labelD.place_forget()
-        entryD.place_forget()
-        labelA.place_forget()
-        entryA.place_forget()
-        labelVi.place_forget()
-        entryVi.place_forget()
-        labelVf.place_forget()
-        entryVf.place_forget()
-    elif choice == 'VEc':
-        labelM.place(x=109, y=60)
-        entryM.place(x=81, y=90)
-        labelVi.place(x=270, y=60)
-        entryVi.place(x=294, y=90)
-        labelVf.place(x=490, y=60)
-        entryVf.place(x=507, y=90)
-        labelF.place_forget()
-        entryF.place_forget()
-        labelD.place_forget()
-        entryD.place_forget()
-        labelA.place_forget()
-        entryA.place_forget()
-        entryV.place_forget()
-        labelV.place_forget()
-    elif choice == 'Manual':
-        labelF.place(relx = 0.4, y = 60)
-        entryF.place(relx = 0.4, y = 90)
-        labelD.place_forget()
-        entryD.place_forget()
-        labelA.place_forget()
-        entryA.place_forget()
-        entryV.place_forget()
-        labelV.place_forget()
-        labelVi.place_forget()
-        entryVi.place_forget()
-        labelVf.place_forget()
-        entryVf.place_forget()
+        labelF.place(relx = x[0], y = y[0])
+        entryF.place(relx = x[0], y = y[1])
+        labelD.place(relx = x[2], y = y[0])
+        entryD.place(relx = x[2], y = y[1])
+        labelA.place(relx = x[3], y = y[2])
+        entryA.place(relx = x[3], y = y[3])
+    if choice == 'MV':
+        labelM.place(relx = x[0], y =  y[0])
+        entryM.place(relx = x[0], y =  y[1])
+        labelV.place(relx = x[1], y =  y[0])
+        entryV.place(relx = x[1], y =  y[1])
+    if choice == 'VEc':
+        labelVf.place(relx  = x[0], y = y[0])
+        entryVf.place(relx  = x[0], y = y[1])
+        labelVi.place(relx  = x[2], y = y[0])
+        entryVi.place(relx  = x[2], y = y[1])
+        labelM.place(relx = x[3], y = y[2])
+        entryM.place(relx = x[3], y = y[3])
+    if choice == 'Manual':
+        labelF.place(relx=0.4,y=70)
+        entryF.place(relx=0.4, y = 100)
     return 
 
 # -------------------------------------------------------------#
 # Funciones Parametros - Roce
 # -------------------------------------------------------------#
-def getRoce():
-    roce = checkRoce.get()
-    if roce == 1:
-        labelMC.place(x=143, y=100)
-        materialCaja.place(x=143, y=170)
-        labelMS.place(x=431, y=100)
-        materialSuelo.place(x=431, y=170)
-        labelRr.place(x=294, y=140)
-    else:
-        labelMC.place_forget()
-        materialCaja.place_forget()
-        labelMS.place_forget()
-        materialSuelo.place_forget()
-        labelRr.place_forget()
-    return
-
 def getCoefRoce(event):
-    caja = materialCaja.get()
-    suelo = materialSuelo.get()
-    coeficiente = calcRoce(caja, suelo)
+    caja = varCaja.get()
+    suelo = varSuelo.get()
+    coeficiente = 0
+    if caja and suelo:
+        coeficiente = calcRoce(caja, suelo)
     if coeficiente:
         labelRr.configure(text=f'El coeficiente de roce es {coeficiente}')
-    return
+    return coeficiente
 
 def calcRoce(caja, suelo):
-    if caja == 'Madera' and suelo == 'Madera':
-        return 0.45
-    elif caja == 'Madera' and suelo == 'Acero':
-        return 0.5
-    elif caja == 'Madera' and suelo == 'Cobre':
-        return 0.45
-    elif caja == 'Acero' and suelo == 'Madera':
-        return 0.5
-    elif caja == 'Acero' and suelo == 'Acero':
-        return 0.55
-    elif caja == 'Acero' and suelo == 'Cobre':
-        return 0.4
-    elif caja == 'Cobre' and suelo == 'Madera':
-        return 0.45
-    elif caja == 'Cobre' and suelo == 'Acero':
-        return 0.4
-    elif caja == 'Cobre' and suelo == 'Cobre':
-        return 0.4
+    roceDict = {
+        ('Madera', 'Madera'): 0.45,
+        ('Madera', 'Acero'): 0.5,
+        ('Madera', 'Cobre'): 0.45,
+        ('Acero', 'Madera'): 0.5,
+        ('Acero', 'Acero'): 0.55,
+        ('Acero', 'Cobre'): 0.4,
+        ('Cobre', 'Madera'): 0.45,
+        ('Cobre', 'Acero'): 0.4,
+        ('Cobre', 'Cobre'): 0.4
+    }
+    return roceDict[(caja, suelo)]
 # -------------------------------------------------------------#
 # Elementos Menu
 # -------------------------------------------------------------#
@@ -393,6 +361,8 @@ labelDl = ctk.CTkLabel(canvasCaja, text='Desplazamiento: ', font=(
 fig = canvasCaja.create_rectangle(
     posIniX, posIniY, 451, 400, fill='#ff6a36')
 suelo = canvasCaja.create_rectangle(0,400,720,500,fill='#A18072',outline='#A18072')
+switchTheme = ctk.CTkSwitch(canvasCaja, text='Modo Oscuro',command=toggleTheme,text_color='black')
+# switchTheme.place(relx=0.8, y=80, anchor='center')
 # -------------------------------------------------------------#
 # Elementos Parametros
 # -------------------------------------------------------------#
@@ -436,7 +406,7 @@ rbtn3 = ctk.CTkRadioButton(
     frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar)
 rbtn4 = ctk.CTkRadioButton(
     frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual')
-rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', command=getRoce, variable=checkRoce)
+rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', variable=checkRoce)
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
 rbtn1.place(x=30, y=100)
@@ -447,13 +417,16 @@ rbtn5.place(x=30, y=260)
 selectVar.trace('w', refreshPmt)
 selectVar.trace('w', formulas)
 selectVar.trace('w', toggleMovManual)
+checkRoce.trace('w', refreshPmt)
 # -------------------------------------------------------------#
 # Elementos Roce
 # -------------------------------------------------------------#
+varCaja = tk.StringVar()
+varSuelo = tk.StringVar()
+materiales = ['Madera', 'Acero', 'Cobre']
 labelMC = ctk.CTkLabel(framePmt, text='Material Caja',text_color='black')
 labelMS = ctk.CTkLabel(framePmt, text='Material Suelo',text_color='black')
-materiales = ['Madera', 'Acero', 'Cobre']
-materialCaja = ctk.CTkComboBox(framePmt, values=materiales, state='readonly')
-materialSuelo = ctk.CTkComboBox(framePmt, values=materiales, state='readonly')
+materialCaja = ctk.CTkComboBox(framePmt, values=materiales, state='readonly',command=getCoefRoce,variable=varCaja)
+materialSuelo = ctk.CTkComboBox(framePmt, values=materiales, state='readonly',command=getCoefRoce,variable=varSuelo)
 labelRr = ctk.CTkLabel(framePmt, text=f'El coeficiente de roce es {0}',text_color='black')
 win.mainloop()
