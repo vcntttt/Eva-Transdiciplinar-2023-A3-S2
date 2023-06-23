@@ -1,6 +1,6 @@
-import PyAutoGUI
 import tkinter as tk
 from tkinter import ttk
+import pyautogui as pya
 import time
 nRes = [1200, 800]
 # Dimensiones (ojo, no son coordenadas, es lo que miden los espacios)
@@ -26,15 +26,16 @@ canvasMenu.create_text(
     107, 90, text="MENU", fill="black", font=('Helvetica 15 bold'))
 boton = ttk.Button(text="Boton Que Imprima")
 boton.place(x=50, y=130)
+
 def captura():
-    PyAutoGUI.screenshot()
+    pya.screenshot()
     captura.save("screenshot.png")
 
 
 boton2 = ttk.Button(text="Boton Screenshot", command=captura)
 boton2.place(x=55, y=200)
 canvasMenu.create_text(
-    107, 300, text= "Se Aceptan Ideas ;)", fill="green", font=("helvetica 15 bold"))    
+    107, 300, text= "Se Aceptan Ideas ;)", fill="green", font=("helvetica 15 bold"))   
 
 # -----------------------------------------------------------#
 # Lienzo Caja
@@ -68,9 +69,8 @@ def mueveCaja(movimiento):
         disRecorrida += 1
         canvasCaja.update()
         time.sleep(0.02)
-    return
-
-
+        return
+    
 def posIni(movimiento):
     coords = canvasCaja.coords(fig)
     if coords[0] != posIniX:
@@ -115,10 +115,46 @@ canvasPmt = tk.Canvas(win, width=640, height=300)
 canvasPmt.place(x=201, y=501)
 canvasPmt.create_rectangle(
     0, 0, 640, 300, fill='lightblue', outline=canvasMenu['background'])
+canvasPmt2 = tk.Canvas(win, width=640, height=300)
+canvasPmt2.create_rectangle(
+    0, 0, 640, 300, fill='lightblue', outline=canvasMenu['background'])
+canvasPmt2.place(x=600,y=501)
+
 # Roce
 checkRoce = tk.IntVar(value=0)
+checkVariacion = tk.IntVar(value=0)
 
 
+
+def calcular_variacion_energia(masa, gravedad, altura):
+    variacion_energia = masa * gravedad * altura
+    print("La variación de energía es:", variacion_energia)
+etiqueta_masa = tk.Label(canvasPmt2, text="Masa:")
+etiqueta_masa.pack()
+entrada_masa = tk.Entry(canvasPmt2)
+entrada_masa.pack()
+etiqueta_gravedad = tk.Label(canvasPmt2, text="Gravedad:")
+etiqueta_gravedad.pack()
+entrada_gravedad = tk.Entry(canvasPmt2)
+entrada_gravedad.pack()
+etiqueta_altura = tk.Label(canvasPmt2, text="Altura:")
+etiqueta_altura.pack()
+entrada_altura = tk.Entry(canvasPmt2)
+entrada_altura.pack()
+
+
+def getVariacion():
+    variacion = checkVariacion.get()
+    if variacion == 1:
+        etiqueta_masa.place(x=20, y=50)
+        entrada_masa.place(x=20, y=80)
+        etiqueta_gravedad.place(x=20, y=130)
+        entrada_gravedad.place(x=20, y=160)
+        etiqueta_altura.place(x=20, y=210)
+        entrada_altura.place(x=20, y=250)
+        return
+        
+        
 def getRoce():
     roce = checkRoce.get()
     if roce == 1:
@@ -136,6 +172,13 @@ def getRoce():
         materialSuelo.place_forget()
         labelR.place_forget()
     return
+
+
+
+
+
+
+
 
 
 def showTableR():
@@ -164,6 +207,10 @@ materialSuelo = ttk.Combobox(canvasPmt)
 labelR = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
 btnShowTable = ttk.Button(
     canvasPmt, text='Mostrar Coeficientes de Roce', command=showTableR)
+
+askVariacion = ttk.Checkbutton(canvasPmt, text='variacion',
+                              command=getVariacion, variable=checkVariacion)
+askVariacion.place(x=430, y=170)
 # ------------------------
 materiales = ['Madera', 'Acero', 'Cobre']
 coeficientes = [
@@ -174,4 +221,6 @@ coeficientes = [
 materialCaja = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 materialSuelo = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 labelR = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
+
+
 win.mainloop()
