@@ -1,22 +1,26 @@
 import tkinter as tk
 from tkinter import ttk
-import pyautogui as pya
 import time
+import math
+from PIL import ImageGrab
 nRes = [1200, 800]
 # Dimensiones (ojo, no son coordenadas, es lo que miden los espacios)
-# Menu --> 200x800
-# Caja Objeto --> 640x500
-# Caja Parametros --> 640x300
-# Ambos graficos son de 400x400
-# -----------------------------------------------------------#
+# Menu --> 240x800
+# Caja Objeto --> 720x500
+# Caja Parametros --> 720x300
+# Caja de caclulos --> 240x800
+# ----------------------------------------------------------#
 # Tkinter base
 # -----------------------------------------------------------#
-win = tk.Tk()
+win = ctk.CTk()
+win._set_appearance_mode('light')
 win.title('Proyecto Transdiciplinario: Trabajo y Energia')
+win.iconbitmap('icon.ico')
 win.geometry(f'{nRes[0]}x{nRes[1]}')
 win.resizable(False, False)
+fuente = ctk.CTkFont(family='Times New Roman', size=12)
 # -----------------------------------------------------------#
-# Lienzo del menu
+# Init Canvas
 # -----------------------------------------------------------#
 canvasMenu = tk.Canvas(win, width=200, height=800)
 canvasMenu.place(x=0, y=0)
@@ -26,84 +30,169 @@ canvasMenu.create_text(
     107, 90, text="MENU", fill="black", font=('Helvetica 15 bold'))
 boton = ttk.Button(text="Boton Que Imprima")
 boton.place(x=50, y=130)
-
 def captura():
-    pya.screenshot()
+    PyAutoGUI.screenshot()
     captura.save("screenshot.png")
 
 
 boton2 = ttk.Button(text="Boton Screenshot", command=captura)
 boton2.place(x=55, y=200)
 canvasMenu.create_text(
-    107, 300, text= "Se Aceptan Ideas ;)", fill="green", font=("helvetica 15 bold"))   
+    107, 300, text= "Se Aceptan Ideas ;)", fill="green", font=("helvetica 15 bold"))    
 
-# -----------------------------------------------------------#
-# Lienzo Caja
-# -----------------------------------------------------------#
-canvasCaja = tk.Canvas(win, width=640, height=500)
-canvasCaja.place(x=201, y=0)
-canvasCaja.create_rectangle(
-    0, 0, 640, 500, fill='white', outline=canvasMenu['background'])
-# Caja
-posIniX = 231
-posIniY = 250
-fig = canvasCaja.create_rectangle(
-    posIniX, posIniY, 411, 400, fill='red', outline=canvasMenu['background'])
-# Suelo
-canvasCaja.create_rectangle(
-    0, 400, 640, 500, fill='#A18072', outline=canvasMenu['background'])
-
-
-# Movimiento Caja
-def mueveCaja(movimiento):
-    desplazamiento = abs(movimiento)
-    disRecorrida = 0
-    if movimiento > 0:
-        direccion = 1
-    elif movimiento < 0:
-        direccion = -1
+def formulas(*args):
+    return
+def toggleTheme(): #Not work
+    theme = win._get_appearance_mode()
+    print(theme)
+    if theme == 'light':
+        win.set_appearance_mode('dark')
     else:
-        direccion = 0
+        win.set_appearance_mode('light')
+    win.update()
+# -------------------------------------------------------------#
+# Funciones Caja
+# -------------------------------------------------------------#
+
+
+def mueveCaja(resultado =0, direccion = 1,velocidad = 1):
+    choice = selectVar.get()
+    desplazamiento = resultado * 1000
+    disRecorrida = 0
+    velTime = velocidad / 10000
+    print(f'velocidad: {velTime}')
     while disRecorrida < desplazamiento:
+        coords = canvasCaja.coords(fig)
+        esqDer = coords[2] + direccion
+        esqIzq = coords[0] + direccion
         canvasCaja.move(fig, direccion, 0)
         disRecorrida += 1
+        if esqDer > 720 or esqIzq < 0:
+            posIni()
+            break
         canvasCaja.update()
         time.sleep(0.02)
-        return
-    
+    return
+
+
 def posIni(movimiento):
     coords = canvasCaja.coords(fig)
     if coords[0] != posIniX:
         if coords[0] > posIniX:
             despX = -(abs(coords[0]-posIniX))
         else:
-            despX = abs(coords[0]-posIniX)
+            despX = abs(x1-posI)
         canvasCaja.move(fig, despX, 0)
 
-
-# Linea Referencia Movimiento
-labelFN = ttk.Label(canvasCaja, text='Fuerza Neta')
-
-
-def PintaLinea(movimiento):
-    if movimiento > 0:
-        canvasCaja.create_polygon(411, 200, 391, 190, 391, 210, fill='black')
-        canvasCaja.create_line(200, 200, 411, 200, fill='black', width=3)
-        canvasCaja.create_window(320, 150, window=labelFN)
-    elif movimiento < 0:
-        canvasCaja.create_line(200, 200, 411, 200, fill='black', width=3)
-        canvasCaja.create_polygon(180, 200, 200, 190, 200, 210, fill='black')
+def PintaLinea(resultado, direccion):
+    choice = selectVar.get()
+    canvasCaja.delete('linea')
+    if resultado:
+        canvasCaja.create_line(
+            275, 200, 411, 200, fill='black', width=3, tags='linea')
+        canvasCaja.create_window(350, 150, window=labelFN, tags='linea')
+        if direccion > 0:
+            canvasCaja.create_polygon(
+                411, 200, 391, 190, 391, 210, fill='black', tags='linea')
+    elif direccion < 0:
+        canvasCaja.create_polygon(
+            275, 200, 295, 190, 295, 210, fill='black', tags='linea')
     else:
         return
+    if choice == 'FDA':
+        canvasCaja.create_window(350, 100, window=labelDl, tags='linea')
     return
 
+def stop():
+    posIni()
+    return
 
-# Boton 'Run'
-def BtnRun(movimiento):
-    posIni(movimiento)
-    PintaLinea(movimiento)
-    mueveCaja(movimiento)
+posX = None
+def toggleMovManual(*args):
+    choice = selectVar.get()
+    if choice == 'Manual':
+        canvasCaja.bind('<Button-1>', pickBox)
+        canvasCaja.bind('<B1-Motion>', moveOn)
+        canvasCaja.bind('<ButtonRelease-1>',letItgo)
+    else:
+        posIni()
+        canvasCaja.unbind('<Button-1>')
+        canvasCaja.unbind('<B1-Motion>')
+        canvasCaja.unbind('<ButtonRelease-1>')
+    return
 
+def pickBox(event):
+    global posX
+    x1,y1,x2,y2 = canvasCaja.coords(fig)
+    if x1 <= event.x <= x2 and y1 <= event.y <= y2:
+        posX = event.x
+    return
+
+desp = 0
+def moveOn(event):
+    global posX,desp
+    if posX is not None:
+        x1,y2,x2,y2 = canvasCaja.coords(fig)
+        despX = event.x - posX
+        newX1 = x1 + despX
+        newX2 = x2 + despX
+        if newX1 >= 0 and newX2 <= canvasCaja.winfo_width():
+            desp = abs(x1-posIniX) 
+            labelDl.place(x= 320, y= 200)
+            labelDl.configure(text = f'Desplazamiento: {int(desp)} metros')
+            calcInv(desp)
+            canvasCaja.move(fig,despX,0)
+            posX = event.x
+            if desp > 260:
+                return
+    return
+
+def letItgo(event):
+    global posX
+    posX = None
+    return
+
+def calcInv(desplazamiento):
+    choice = selectVar.get()
+    try:
+        fuerza = float(entryF.get())
+        trabajo = fuerza * desplazamiento
+        print(f'Trabajo: {trabajo}')
+
+    except ValueError:
+        msg.showerror(
+                'Valores incompletos', 'Porfavor ingresar todos los valores solicitados')
+    return
+# -------------------------------------------------------------#
+# Funciones Parametros
+# -------------------------------------------------------------#
+
+coeficiente = 0
+def calc():
+    global coeficiente
+    choice = selectVar.get()
+    f = d = aG = aR = m = v = vi = vf = 0
+    u = coeficiente
+    dire = 1
+    rType = 'Resultado'
+    rNum = 0
+    if choice == 'FDA':
+        try:
+            f = float(entryF.get())
+            d = float(entryD.get())
+            aG = float(entryA.get())
+            aR = math.radians(aG)
+            trabajo = abs(f * d) * math.cos(aR)
+            if trabajo < 0:
+                dire = -1
+            elif trabajo > 0:
+                dire = 1
+            trabajo = abs(trabajo)
+            aR = '{:.4f}'.format(aR)
+            rType = 'Trabajo'
+            rNum = trabajo
+            labelFN.configure(text=f"{rType}: {rNum}")
+            labelDl.configure(text=f'Desplazamiento: {d} metros')
 
 dis = -150  # Valor de prueba
 ButtonRun = tk.Button(canvasCaja, text='Run', command=lambda: BtnRun(dis))
@@ -115,71 +204,64 @@ canvasPmt = tk.Canvas(win, width=640, height=300)
 canvasPmt.place(x=201, y=501)
 canvasPmt.create_rectangle(
     0, 0, 640, 300, fill='lightblue', outline=canvasMenu['background'])
-canvasPmt2 = tk.Canvas(win, width=640, height=300)
-canvasPmt2.create_rectangle(
-    0, 0, 640, 300, fill='lightblue', outline=canvasMenu['background'])
-canvasPmt2.place(x=600,y=501)
-
 # Roce
 checkRoce = tk.IntVar(value=0)
-checkVariacion = tk.IntVar(value=0)
 
 
-
-def calcular_variacion_energia(masa, gravedad, altura):
-    variacion_energia = masa * gravedad * altura
-    print("La variación de energía es:", variacion_energia)
-etiqueta_masa = tk.Label(canvasPmt2, text="Masa:")
-etiqueta_masa.pack()
-entrada_masa = tk.Entry(canvasPmt2)
-entrada_masa.pack()
-etiqueta_gravedad = tk.Label(canvasPmt2, text="Gravedad:")
-etiqueta_gravedad.pack()
-entrada_gravedad = tk.Entry(canvasPmt2)
-entrada_gravedad.pack()
-etiqueta_altura = tk.Label(canvasPmt2, text="Altura:")
-etiqueta_altura.pack()
-entrada_altura = tk.Entry(canvasPmt2)
-entrada_altura.pack()
-
-
-def getVariacion():
-    variacion = checkVariacion.get()
-    if variacion == 1:
-        etiqueta_masa.place(x=20, y=50)
-        entrada_masa.place(x=20, y=80)
-        etiqueta_gravedad.place(x=20, y=130)
-        entrada_gravedad.place(x=20, y=160)
-        etiqueta_altura.place(x=20, y=210)
-        entrada_altura.place(x=20, y=250)
-        return
-        
-        
 def getRoce():
     roce = checkRoce.get()
+    posIni()
+    canvasCaja.delete('linea')
+    widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelMC,materialCaja,labelMS,materialSuelo,labelRr]
+    for widget in widgetsForget:
+        widget.place_forget()
     if roce == 1:
-        labelMC.place(x=20, y=50)
-        materialCaja.place(x=20, y=80)
-        labelMS.place(x=20, y=130)
-        materialSuelo.place(x=20, y=160)
-        labelR.place(x=20, y=210)
-        btnShowTable.place(x=20, y=250)
-
+        x = [0.4,0.7,0.7,0.6]
+        y = [50,80,110,140]
+        labelMC.place(relx=0.1, y= 50)
+        materialCaja.place(relx=0.1,y= 80)
+        labelMS.place(relx=0.1, y=150)
+        materialSuelo.place(relx=0.1,y=180)
+        labelRr.place(relx=0.1, y=250)
     else:
-        labelMC.place_forget()
-        materialCaja.place_forget()
-        labelMS.place_forget()
-        materialSuelo.place_forget()
-        labelR.place_forget()
-    return
+        x = [0.2,0.5,0.6,0.4]
+        y = [50,80,110,140]
+    if choice == 'FDA':
+        labelF.place(relx = x[0], y = y[0])
+        entryF.place(relx = x[0], y = y[1])
+        labelD.place(relx = x[2], y = y[0])
+        entryD.place(relx = x[2], y = y[1])
+        labelA.place(relx = x[3], y = y[2])
+        entryA.place(relx = x[3], y = y[3])
+    if choice == 'MV':
+        labelM.place(relx = x[0], y =  y[0])
+        entryM.place(relx = x[0], y =  y[1])
+        labelV.place(relx = x[1], y =  y[0])
+        entryV.place(relx = x[1], y =  y[1])
+    if choice == 'VEc':
+        labelVf.place(relx  = x[0], y = y[0])
+        entryVf.place(relx  = x[0], y = y[1])
+        labelVi.place(relx  = x[2], y = y[0])
+        entryVi.place(relx  = x[2], y = y[1])
+        labelM.place(relx = x[3], y = y[2])
+        entryM.place(relx = x[3], y = y[3])
+    if choice == 'Manual':
+        labelF.place(relx=0.4,y=70)
+        entryF.place(relx=0.4, y = 100)
+    return 
 
-
-
-
-
-
-
-
+# -------------------------------------------------------------#
+# Funciones Parametros - Roce
+# -------------------------------------------------------------#
+def getCoefRoce(event):
+    caja = varCaja.get()
+    suelo = varSuelo.get()
+    coeficiente = 0
+    if caja and suelo:
+        coeficiente = calcRoce(caja, suelo)
+    if coeficiente:
+        labelRr.configure(text=f'El coeficiente de roce es {coeficiente}')
+    return coeficiente
 
 def showTableR():
     tableWin = tk.Tk()
@@ -207,10 +289,6 @@ materialSuelo = ttk.Combobox(canvasPmt)
 labelR = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
 btnShowTable = ttk.Button(
     canvasPmt, text='Mostrar Coeficientes de Roce', command=showTableR)
-
-askVariacion = ttk.Checkbutton(canvasPmt, text='variacion',
-                              command=getVariacion, variable=checkVariacion)
-askVariacion.place(x=430, y=170)
 # ------------------------
 materiales = ['Madera', 'Acero', 'Cobre']
 coeficientes = [
@@ -221,6 +299,4 @@ coeficientes = [
 materialCaja = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 materialSuelo = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 labelR = ttk.Label(canvasPmt, text=f'El coeficiente de roce es {0}')
-
-
 win.mainloop()
