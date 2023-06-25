@@ -5,6 +5,7 @@ import time
 import math
 from PIL import ImageGrab
 nRes = [1200, 800]
+coeficiente = 0
 # Dimensiones (ojo, no son coordenadas, es lo que miden los espacios)
 # Menu --> 240x800
 # Caja Objeto --> 720x500
@@ -64,12 +65,18 @@ def toggleTheme(): #Not work
 # -------------------------------------------------------------#
 
 
-def mueveCaja(resultado =0, direccion = 1,velocidad = 1):
+def mueveCaja(movimiento = 0, direccion = 1,velocidad = 1):
     choice = selectVar.get()
-    desplazamiento = resultado * 1000
+    desplazamiento = movimiento * 1000
     disRecorrida = 0
-    velTime = velocidad / 10000
-    print(f'velocidad: {velTime}')
+    maxVelTime = 0.2
+    minVelTime = 0.00002
+    if choice == "FDA" or choice == 'MV':
+        rango = maxVelTime - minVelTime
+        escala = velocidad / (velocidad + 1)
+        velTime = maxVelTime - (rango * escala)
+    elif choice == "VEc":
+        velTime = velocidad
     while disRecorrida < desplazamiento:
         coords = canvasCaja.coords(fig)
         esqDer = coords[2] + direccion
@@ -83,19 +90,20 @@ def mueveCaja(resultado =0, direccion = 1,velocidad = 1):
         time.sleep(velTime)
     return
 
-
 def BtnRun():
     choice = selectVar.get()
+    roce = checkRoce.get()
     if choice != 'Manual':
-        values = calc()
-        resultado = float(values[9])
-        direccion = float(values[10])
-        velocidad = float(values[5])
         posIni()
-        PintaLinea(resultado, direccion)
-        mueveCaja(resultado, direccion, velocidad)
+        values, parametros = calc()
+        resultado = float(parametros[1])
+        movimiento = float(parametros[3])
+        direccion = float(parametros[2])
+        velocidad = float(parametros[4])
+        PintaLinea(movimiento, direccion)
+        mueveCaja(movimiento, direccion, velocidad)
     else:
-        print(choice)
+        return
 
 def posIni():
     choice = selectVar.get()
@@ -105,6 +113,8 @@ def posIni():
         posI = posIniX
     elif choice == 'VEc' or choice == 'Manual':
         posI = 0
+    else:
+        posI = posIniX
     if x1 != posI:            
         if x1 > posI:
             despX = -(abs(x1-posI))
@@ -112,25 +122,23 @@ def posIni():
             despX = abs(x1-posI)
         canvasCaja.move(fig, despX, 0)
 
-def PintaLinea(resultado, direccion):
+def PintaLinea(movimiento, direccion):
     choice = selectVar.get()
     canvasCaja.delete('linea')
-    if resultado:
+    if movimiento:
         canvasCaja.create_line(
             275, 200, 411, 200, fill='black', width=3, tags='linea')
         canvasCaja.create_window(350, 150, window=labelFN, tags='linea')
         if direccion > 0:
+                canvasCaja.create_polygon(
+                    411, 200, 391, 190, 391, 210, fill='black', tags='linea')
+        elif direccion < 0:
             canvasCaja.create_polygon(
-                411, 200, 391, 190, 391, 210, fill='black', tags='linea')
-    elif direccion < 0:
-        canvasCaja.create_polygon(
-            275, 200, 295, 190, 295, 210, fill='black', tags='linea')
+                275, 200, 295, 190, 295, 210, fill='black', tags='linea')
+        if choice == 'FDA':
+            canvasCaja.create_window(350, 100, window=labelDl, tags='linea')
     else:
         return
-    if choice == 'FDA':
-        canvasCaja.create_window(350, 100, window=labelDl, tags='linea')
-    return
-
 def stop():
     posIni()
     return
@@ -195,33 +203,55 @@ def calcInv(desplazamiento):
 # Funciones Parametros
 # -------------------------------------------------------------#
 
-coeficiente = 0
 def calc():
     global coeficiente
     choice = selectVar.get()
     f = d = aG = aR = m = v = vi = vf = 0
+    g = 9.8
     u = coeficiente
-    dire = 1
+    print(f'Coeficiente de Roce: {u}')
+    rad180 = math.radians(180)
     rType = 'Resultado'
     rNum = 0
+    dire = 1
+    movimiento = velocidad = 0
     if choice == 'FDA':
         try:
             f = float(entryF.get())
             d = float(entryD.get())
             aG = float(entryA.get())
             aR = math.radians(aG)
-            trabajo = abs(f * d) * math.cos(aR)
-            if trabajo < 0:
+            if u != 0:
+                m = float(entryM.get())
+                print('Pumba roce')
+                w = f * d * math.cos(aR)
+                wFr = u * m * g * d * math.cos(rad180)
+                wNeto = w + wFr
+                print(f'Trabajo del roce: {wFr}')
+                print(f'Trabajo: {w}')
+                print(f'neto: {wNeto}')
+                if wNeto < 0:
+                    movimiento = 0
+                    print('Se necesita aplicar mas fuerza')
+                # Fuerza necesaria para Movimiento
+                    fMov = 0
+                else:
+                    movimiento = d
+                    velocidad = f
+                
+            else:
+                wNeto = abs(f * d) * math.cos(aR)
+                movimiento = d
+                velocidad = f
+            if wNeto < 0:
                 dire = -1
-            elif trabajo > 0:
+            elif wNeto > 0:
                 dire = 1
-            trabajo = abs(trabajo)
             aR = '{:.4f}'.format(aR)
             rType = 'Trabajo'
-            rNum = trabajo
+            rNum = wNeto
             labelFN.configure(text=f"{rType}: {rNum}")
             labelDl.configure(text=f'Desplazamiento: {d} metros')
-
         except ValueError:
             msg.showerror(
                 'Valores incompletos', 'Porfavor ingresar todos los valores solicitados')
@@ -235,6 +265,8 @@ def calc():
             elif v > 0:
                 dire = 1
             eC = abs(eC)
+            movimiento = eC
+            velocidad = v
             rType = 'Energia Cinetica'
             rNum = eC
             labelR.configure(text=f"{rType}: {rNum}")
@@ -248,9 +280,13 @@ def calc():
             vi = float(entryVi.get())
             eCf = (0.5 * m) * (vf ** 2)
             eCi = (0.5 * m) * (vi ** 2)
-            VE = eCf - eCi
+            if u != 0:
+                w = eCf - eCi
+                wNeto = w - wFr
+            else:
+                wNeto = eCf - eCi
             rType = 'Variacion de energia'
-            rNum = VE
+            rNum = wNeto
             labelR.configure(text=f"{rType}: {rNum}")
         except ValueError:
             msg.showerror(
@@ -261,8 +297,9 @@ def calc():
         rNum = resultadoF
     else:
         labelFN.configure(text=f'{rType}: {int(rNum)} J')
-    valores = [f, d, aG, aR, m, v, vi, vf, rType, rNum, dire]
-    return valores
+    valores = [f, d, aG, aR, m, v, vi, vf]
+    parametros = [rType, rNum, dire, movimiento, velocidad]
+    return valores, parametros
 
 
 def refreshPmt(*args):
@@ -271,6 +308,7 @@ def refreshPmt(*args):
     posIni()
     canvasCaja.delete('linea')
     widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelMC,materialCaja,labelMS,materialSuelo,labelRr]
+
     for widget in widgetsForget:
         widget.place_forget()
     if roce == 1:
@@ -289,8 +327,14 @@ def refreshPmt(*args):
         entryF.place(relx = x[0], y = y[1])
         labelD.place(relx = x[2], y = y[0])
         entryD.place(relx = x[2], y = y[1])
-        labelA.place(relx = x[3], y = y[2])
-        entryA.place(relx = x[3], y = y[3])
+        if roce == 1:
+            labelM.place(relx = x[0], y = y[2])
+            entryM.place(relx = x[0], y = y[3])
+            labelA.place(relx = x[2], y = y[2])
+            entryA.place(relx = x[2], y = y[3])
+        else:
+            labelA.place(relx = x[3], y = y[2])
+            entryA.place(relx = x[3], y = y[3])
     if choice == 'MV':
         labelM.place(relx = x[0], y =  y[0])
         entryM.place(relx = x[0], y =  y[1])
@@ -312,6 +356,7 @@ def refreshPmt(*args):
 # Funciones Parametros - Roce
 # -------------------------------------------------------------#
 def getCoefRoce(event):
+    global coeficiente
     caja = varCaja.get()
     suelo = varSuelo.get()
     coeficiente = 0
