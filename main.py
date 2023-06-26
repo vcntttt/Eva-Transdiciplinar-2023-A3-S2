@@ -338,12 +338,12 @@ def calcRoce(caja, suelo):
 # Elementos Menu
 # -------------------------------------------------------------#
 labelTitleM = ctk.CTkLabel(frameMenu, text='Menu',
-                            text_color='white')
+                            text_color='white', font=("Perpetua",23))
 labelTitleM.place(relx=0.5, anchor='center', y=50)
-btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot)
+btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot, font=("Felix Titling",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"))
 btnSS.place(relx=0.5, anchor='center', y=130)
-btnRun = ctk.CTkButton(frameMenu, text='Run', command=BtnRun)
-btnStop = ctk.CTkButton(frameMenu,text='Detener',command=stop)
+btnRun = ctk.CTkButton(frameMenu, text='Run', font=("Felix Titling",14), fg_color= ("Orange"), text_color=("black"), command=BtnRun)
+btnStop = ctk.CTkButton(frameMenu,text='Detener', font=("Felix Titling",14), fg_color= ("orange"), text_color=("Black"), command=stop)
 btnRun.place(relx=0.5, y=180, anchor='center')
 btnStop.place(relx = 0.5,y = 230,anchor = 'center')
 # Modelo Matematico
