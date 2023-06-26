@@ -5,7 +5,7 @@ from tkinter import messagebox as msg
 import ttkbootstrap as ttk
 import time
 import math
-from PIL import ImageGrab
+from PIL import ImageGrab,Image, ImageTk
 nRes = [1200, 800]
 # Dimensiones (ojo, no son coordenadas, es lo que miden los espacios)
 # Menu --> 240x800
@@ -86,40 +86,7 @@ def posIni():
         else:
             despX = abs(coords[0]-posIniX)
         canvasCaja.move(fig, despX, 0)
-#-------------------------------------------------------------#
-# 
-#-------------------------------------------------------------#
-def printValues():
-    choice = refreshPmt()
-    values = calc()
-    table.delete(*table.get_children())
-    data = [
-        ['Fuerza', f'{values[0]}'],
-        ['Desplazamiento', f'{values[1]}'],
-        ['Angulo (Grados)', f'{values[2]}'],
-        ['Angulo (Radianes)', f'Aprox {values[3]}'],
-        ['Masa', f'{values[4]}'],
-        ['Velocidad', f'{values[5]}'],
-        ['Masa inicial', f'{values[6]}'],
-        ['Velocidad inicial', f'{values[7]}'],
-        ['Masa final', f'{values[8]}'],
-        ['Velocidad final', f'{values[9]}'],
-        [f'{values[10]}', f'{values[11]}'],]
-    if choice == 'FDA':
-        table.insert('', 'end', values=data[0])
-        table.insert('', 'end', values=data[1])
-        table.insert('', 'end', values=data[2])
-        table.insert('', 'end', values=data[3])
-    elif choice == 'MV':
-        table.insert('', 'end', values=data[4])
-        table.insert('', 'end', values=data[5])
-    elif choice == 'MVF-MVI':
-        table.insert('', 'end', values=data[6])
-        table.insert('', 'end', values=data[7])
-        table.insert('', 'end', values=data[8])
-        table.insert('', 'end', values=data[9])
-    table.place(x=3, y=300)
-    return
+
 #-------------------------------------------------------------#
 # Boton de "screeshot"
 #-------------------------------------------------------------#
@@ -136,23 +103,44 @@ def screenshot():
 # Modelo Matematico
 #-------------------------------------------------------------#
 
-labelTitleFT = ttk.Label(canvasMenu, text= 'Del Trabajo', font=('Times new roman',20),
-                    foreground='white', background='#2f3123')
-labelTitleVE = ttk.Label(canvasMenu, text= 'Variacion de energia', font=('Times new roman',20),
-                    foreground='white', background='#2f3123')
-labelTitleFEc = ttk.Label(canvasMenu, text= 'De Energia Cinetica', font=('Times new roman',20),
-                    foreground='white', background='#2f3123')
-#-------------------------------------------------------------#
-FT = ttk.Label(canvasMenu, text= 'W = | F | x | D | x cos a°', font=('Times new roman',18),
-                    foreground='white',background='#2f3123')
-FEc = ttk.Label(canvasMenu, text= 'Ec = ½m V²', font=('Times new roman',18),
-                    foreground='white',background='#2f3123')
-FWEc = ttk.Label(canvasMenu, text= 'W = ∆Ec', font=('Times new roman',18),
-                    foreground='white',background='#2f3123')
-VEc = ttk.Label(canvasMenu, text= '∆Ec = Ecf - Eci', font=('Times new roman',18),
-                    foreground='white',background='#2f3123')
-VEc_2 = ttk.Label(canvasMenu, text= '∆Ec = ½m Vf² - ½m Vi²', font=('Times new roman',18),
-                    foreground='white',background='#2f3123')
+formulas = []
+formulas.append(Image.open("latex_formula.png"))
+formulas.append(Image.open("latex_formula_1.png"))
+formulas.append(Image.open("latex_formula_2.png"))
+
+imagen = ImageTk.PhotoImage(formulas[0])
+imagen2 = ImageTk.PhotoImage(formulas[1])
+imagen3 = ImageTk.PhotoImage(formulas[2])
+
+Label_imagen = tk.Label(win, image=imagen, borderwidth=0)
+Label_imagen_2 = tk.Label(win, image=imagen2, borderwidth=0)
+Label_imagen_3 = tk.Label(win, image=imagen3, borderwidth=0)
+
+def formulas():
+    choice = selectVar.get()
+    if choice == 'FDA':
+        Label_imagen.place(x=0,y=300)
+        Label_imagen_2.place_forget()
+        Label_imagen_3.place_forget()
+    elif choice == 'MV':
+        Label_imagen_2.place(x=0,y=300)
+        Label_imagen.place_forget()
+        Label_imagen_3.place_forget()
+    elif choice == 'MVF-MVI':
+        Label_imagen_3.place(x=0,y=300)
+        Label_imagen.place_forget()
+        Label_imagen_2.place_forget()
+    return formulas
+
+
+
+checkbox_var = tk.IntVar(value = 0)
+
+formula = ttk.Checkbutton(canvasTyEc, text='Modelo Matematico',command=formulas, variable=checkbox_var,bootstyle='round-toggle')
+formula.place(x=30,y=400)
+
+materiales = ['Madera', 'Acero', 'Cobre']
+materialCaja = ttk.Combobox(canvasPmt, values=materiales, state='readonly')
 
 
 #-------------------------------------------------------------#
@@ -163,48 +151,6 @@ labelTitleD_1 = ttk.Label(canvasMenu, text= 'Donde: \n•Ec = Energia Cinetica\n
 labelTitleD_2 = ttk.Label(canvasMenu, text= 'Donde: \n•∆Ec = Variacion\nde energia cinetica\n•Ecf = Energia\nCinetica Final\n•Eci = Energia\nCinetica Inicial\n•m = Masa\n•Vf = Velociad final\n•Vi = Velocidad Inicial',
                     font=('Times new roman',18),foreground='white', background='#2f3123')
 #-------------------------------------------------------------#
-def formulas():
-    labelTitleMM = ttk.Label(canvasMenu, text= 'Modelo Matematico', font=('Times new roman',20),
-                    foreground='white', background='#2f3123')
-    labelTitleMM.place(relx=0.5, anchor='center', y=280)
-    choice = selectVar.get()
-    if choice == 'FDA':
-        labelTitleFT.place(relx=0.5, anchor='center', y=320)
-        FT.place(relx=0.5,anchor='center',y=380)
-        labelTitleD.place(x=10,y=420)
-        labelTitleFEc.place_forget()
-        labelTitleVE.place_forget()
-        FEc.place_forget()
-        FWEc.place_forget()
-        VEc.place_forget()
-        VEc_2.place_forget()
-        labelTitleD_1.place_forget()
-        labelTitleD_2.place_forget()
-    elif choice == 'MV':
-        labelTitleFEc.place(relx=0.5, anchor='center', y=320) 
-        FEc.place(relx=0.5,anchor='center',y=380)
-        labelTitleD_1.place(x=10,y=420)
-        labelTitleFT.place_forget()
-        labelTitleVE.place_forget()
-        FT.place_forget()
-        FWEc.place_forget()
-        VEc.place_forget()
-        VEc_2.place_forget()
-        labelTitleD.place_forget()
-        labelTitleD_2.place_forget()
-    elif choice == 'MVF-MVI':
-        labelTitleVE.place(relx=0.5, anchor='center', y=320)
-        FWEc.place(relx=0.5,anchor='center',y=380)
-        VEc.place(relx=0.5,anchor='center',y=420)
-        VEc_2.place(relx=0.5,anchor='center',y=460)
-        labelTitleD_2.place(x=10,y=510)
-        labelTitleFEc.place_forget()
-        labelTitleFT.place_forget()
-        FEc.place_forget()
-        FT.place_forget()
-        labelTitleD.place_forget()
-        labelTitleD_1.place_forget()
-    return formulas
 
 #-------------------------------------------------------------#
 # 
@@ -467,10 +413,6 @@ labelTitleM.place(relx=0.5, anchor='center', y=50)
 
 btnSS = ttk.Button(canvasMenu, text="Screenshot", command=screenshot)
 btnSS.place(relx=0.5, anchor='center', y=130)
-
-btnPrint = ttk.Button(canvasMenu, text="Imprimir valores guardados",
-                      command=printValues)
-btnPrint.place(relx=0.5, anchor='center', y=200)
 
 #btnF = ttk.Button(canvasMenu, text='Modelo Matematico',command=formulas)
 #btnF.place(relx=0.5, anchor='center', y=270)
