@@ -86,16 +86,6 @@ def mueveCaja(resultado =0, direccion = 1,velocidad = 1):
 
 def BtnRun():
     choice = selectVar.get()
-    if choice == 'Manual':
-        labelPi.grid()
-        entryPi.grid()
-        labelPf.grid()
-        entryPf.grid()
-    else:
-        labelPi.grid_forget()
-        entryPi.grid_forget()
-        labelPf.grid_forget()
-        entryPf.grid()
     if choice != 'Manual':
         values = calc()
         resultado = float(values[11])
@@ -291,7 +281,7 @@ def refreshPmt(*args):
     roce = checkRoce.get()
     posIni()
     canvasCaja.delete('linea')
-    widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelMC,materialCaja,labelMS,materialSuelo,labelRr,entryPi,labelPi,entryPf,labelPf]
+    widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelRr,entryPi,labelPi,entryPf,labelPf,labelMC,materialCaja,labelMS,materialSuelo]
     for widget in widgetsForget:
         widget.place_forget()
     if roce == 1:
@@ -325,10 +315,10 @@ def refreshPmt(*args):
         labelM.place(relx = x[3], y = y[2])
         entryM.place(relx = x[3], y = y[3])
     if choice == 'Manual':
-        entryPi.place(relx= x[0], y = y [0])
-        labelPi.place(relx= x[0], y = y [1])
-        entryPf.place(relx= x[2], y = y [0])
-        labelPf.place(relx= x[2], y = y [1])
+        entryPi.place(relx= x[0], y = y [1])
+        labelPi.place(relx= x[0], y = y [0])
+        entryPf.place(relx= x[2], y = y [1])
+        labelPf.place(relx= x[2], y = y [0])
     return 
 
 # -------------------------------------------------------------#
@@ -434,7 +424,7 @@ rbtn2 = ctk.CTkRadioButton(
 rbtn3 = ctk.CTkRadioButton(
     frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar)
 rbtn4 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual')
+    frameMenuCalc, text='Desplazamiento manual',value='Manual', variable=selectVar)
 rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', variable=checkRoce)
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
