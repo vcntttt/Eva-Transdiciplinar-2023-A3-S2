@@ -402,12 +402,12 @@ def calcRoce(caja, suelo):
 # Elementos Menu
 # -------------------------------------------------------------#
 labelTitleM = ctk.CTkLabel(frameMenu, text='Menu',
-                            text_color='white')
+                            text_color='white', font=("Perpetua",23))
 labelTitleM.place(relx=0.5, anchor='center', y=50)
-btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot)
+btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot, font=("Felix Titling",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"))
 btnSS.place(relx=0.5, anchor='center', y=130)
-btnRun = ctk.CTkButton(frameMenu, text='Run', command=BtnRun)
-btnStop = ctk.CTkButton(frameMenu,text='Reseteo Manual',command=posIni)
+btnRun = ctk.CTkButton(frameMenu, text='Run', font=("Felix Titling",14), fg_color= ("Orange"), text_color=("black"), command=BtnRun)
+btnStop = ctk.CTkButton(frameMenu,text='Reseteo Manual', font=("Felix Titling",14), fg_color= ("orange"), text_color=("Black"), command=posIni)
 btnRun.place(relx=0.5, y=180, anchor='center')
 btnStop.place(relx = 0.5,y = 230,anchor = 'center')
 # Modelo Matematico
@@ -417,7 +417,7 @@ btnStop.place(relx = 0.5,y = 230,anchor = 'center')
 posIniX = 271
 posIniY = 250
 labelTitleC = ctk.CTkLabel(canvasCaja, text='TRABAJO Y ENERGIA', 
-                           text_color='black')
+                           text_color='black', font=("Algerian",20))
 labelFN = ctk.CTkLabel(canvasCaja, text='',
                         text_color='black')
 labelDl = ctk.CTkLabel(canvasCaja, text='Desplazamiento: ', font=(
@@ -457,20 +457,20 @@ labelVf = ctk.CTkLabel(framePmt, text='Velocidad Final (m/s²)',
 # Elementos Menu Calculos
 # -------------------------------------------------------------#
 labelTitleTyEc = ctk.CTkLabel(frameMenuCalc, text='¿Que desea calcular?', 
-                              text_color='white', fg_color='#2f3123')
+                              text_color='white', fg_color='#2f3123', font= ("Helvetica",14))
 
 selectVar = tk.StringVar()
 toggleManual = tk.IntVar()
 checkRoce = tk.IntVar(value=0)
 rbtn1 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar)
+    frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar, text_color = "Yellow", font=("Calisto MT",12), fg_color='red')
 rbtn2 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar)
+    frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar, text_color= "Yellow", font=("Calisto MT",12), fg_color="Light Green")
 rbtn3 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar)
+    frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar, text_color= "Yellow", font=("Calisto MT",12), fg_color="dark Orange")
 rbtn4 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual')
-rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', variable=checkRoce)
+    frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual', text_color= "Yellow", font=("Calisto MT",12), fg_color='Light Blue')
+rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', variable=checkRoce, text_color= "Yellow", font=("Calisto MT",12))
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
 rbtn1.place(x=30, y=100)
