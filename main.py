@@ -65,19 +65,40 @@ def toggleTheme(): #Not work
 # -------------------------------------------------------------#
 
 
-def mueveCaja(movimiento = 0, direccion = 1,velocidad = 1):
+def mueveCaja(direccion = 1,velocidad = 1):
     choice = selectVar.get()
-    desplazamiento = movimiento * 1000
+    desplazamiento = 1000
     disRecorrida = 0
     maxVelTime = 0.2
     minVelTime = 0.00002
+    velTime = 1
     if choice == "FDA" or choice == 'MV':
+        print(f'Velocidad: {velocidad}')
         rango = maxVelTime - minVelTime
-        escala = velocidad / (velocidad + 1)
+        escala = velocidad / (velocidad + 10)
         velTime = maxVelTime - (rango * escala)
-    elif choice == "VEc":
-        velTime = velocidad
     while disRecorrida < desplazamiento:
+        coords = canvasCaja.coords(fig)
+        esqDer = coords[2] + direccion
+        esqIzq = coords[0] + direccion
+        canvasCaja.move(fig, direccion, 0)
+        disRecorrida += 1
+        if esqDer > 720 or esqIzq < 0:
+                posIni()
+                break
+        canvasCaja.update()
+        print(f'velTime: {velTime}')
+        time.sleep(velTime)
+    return
+def mueveCajaVEc(direccion = 1, vi = 0, vf = 0):
+    desplazamiento = 540
+    disRecorrida = 0
+    rango = 0.2 - 0.0002
+    direccion = 1
+    while disRecorrida < desplazamiento:
+        escala = vf / (vi + (vf - vi)*((disRecorrida / 100)))
+        velTime = (0.2 - (rango * escala)) /10
+        velTime = abs(velTime)
         coords = canvasCaja.coords(fig)
         esqDer = coords[2] + direccion
         esqIzq = coords[0] + direccion
@@ -87,23 +108,24 @@ def mueveCaja(movimiento = 0, direccion = 1,velocidad = 1):
             posIni()
             break
         canvasCaja.update()
+        print(f'velTime en {disRecorrida}: {velTime}')
         time.sleep(velTime)
     return
-
 def BtnRun():
     choice = selectVar.get()
     roce = checkRoce.get()
-    if choice != 'Manual':
-        posIni()
-        values, parametros = calc()
-        resultado = float(parametros[1])
-        movimiento = float(parametros[3])
-        direccion = float(parametros[2])
-        velocidad = float(parametros[4])
-        PintaLinea(movimiento, direccion)
-        mueveCaja(movimiento, direccion, velocidad)
-    else:
+    if choice == 'Manual':
         return
+    posIni()
+    values, parametros = calc()
+    movimiento,direccion, velocidad = map(float, parametros[2:5])
+    vi = vf = 0
+    PintaLinea(movimiento, direccion)
+    if choice == 'VEc':
+        vi, vf = map(float, values[6:8])
+        mueveCajaVEc(direccion, vi, vf)
+    else:
+        mueveCaja(direccion, velocidad)
 
 def posIni():
     choice = selectVar.get()
@@ -139,10 +161,6 @@ def PintaLinea(movimiento, direccion):
             canvasCaja.create_window(350, 100, window=labelDl, tags='linea')
     else:
         return
-def stop():
-    posIni()
-    return
-
 posX = None
 def toggleMovManual(*args):
     choice = selectVar.get()
@@ -238,7 +256,6 @@ def calc():
                 else:
                     movimiento = d
                     velocidad = f
-                
             else:
                 wNeto = abs(f * d) * math.cos(aR)
                 movimiento = d
@@ -282,9 +299,11 @@ def calc():
             eCi = (0.5 * m) * (vi ** 2)
             if u != 0:
                 w = eCf - eCi
-                wNeto = w - wFr
+                wNeto = w + wFr
             else:
                 wNeto = eCf - eCi
+            movimiento = wNeto
+            velocidad = 0
             rType = 'Variacion de energia'
             rNum = wNeto
             labelR.configure(text=f"{rType}: {rNum}")
@@ -341,10 +360,10 @@ def refreshPmt(*args):
         labelV.place(relx = x[1], y =  y[0])
         entryV.place(relx = x[1], y =  y[1])
     if choice == 'VEc':
-        labelVf.place(relx  = x[0], y = y[0])
-        entryVf.place(relx  = x[0], y = y[1])
-        labelVi.place(relx  = x[2], y = y[0])
-        entryVi.place(relx  = x[2], y = y[1])
+        labelVi.place(relx  = x[0], y = y[0])
+        entryVi.place(relx  = x[0], y = y[1])
+        labelVf.place(relx  = x[2], y = y[0])
+        entryVf.place(relx  = x[2], y = y[1])
         labelM.place(relx = x[3], y = y[2])
         entryM.place(relx = x[3], y = y[3])
     if choice == 'Manual':
@@ -388,7 +407,7 @@ labelTitleM.place(relx=0.5, anchor='center', y=50)
 btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot)
 btnSS.place(relx=0.5, anchor='center', y=130)
 btnRun = ctk.CTkButton(frameMenu, text='Run', command=BtnRun)
-btnStop = ctk.CTkButton(frameMenu,text='Detener',command=stop)
+btnStop = ctk.CTkButton(frameMenu,text='Reseteo Manual',command=posIni)
 btnRun.place(relx=0.5, y=180, anchor='center')
 btnStop.place(relx = 0.5,y = 230,anchor = 'center')
 # Modelo Matematico
