@@ -403,7 +403,6 @@ def calcRoce(caja, suelo):
 # -------------------------------------------------------------#
 labelTitleM = ctk.CTkLabel(frameMenu, text='Menu',
                             text_color='white', font=("Perpetua",23))
-                            text_color='white', font=("Perpetua",23))
 labelTitleM.place(relx=0.5, anchor='center', y=50)
 btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot, font=("Felix Titling",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"))
 btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot, font=("Felix Titling",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"))
