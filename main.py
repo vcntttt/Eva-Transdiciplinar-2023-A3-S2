@@ -3,7 +3,7 @@ from tkinter import messagebox as msg
 import customtkinter as ctk
 import time
 import math
-from PIL import ImageGrab
+from PIL import ImageGrab, Image, ImageTk
 nRes = [1200, 800]
 coeficiente = 0
 # Dimensiones (ojo, no son coordenadas, es lo que miden los espacios)
@@ -48,10 +48,48 @@ def screenshot():
     captura.save(f'captura_{contador}.png')
     contador += 1
     return
+# -------------------------------------------------------------#
+#
+# -------------------------------------------------------------#
+
+formulas = []
+
+formulas.append(Image.open("latex_formula.png"))
+formulas.append(Image.open("latex_formula_1.png"))
+formulas.append(Image.open("latex_formula_2.png"))
+formulas.append(Image.open("latex_formula_3.png"))
+formulas.append(Image.open("latex_formula_4.png"))
+
+imagenes = [ImageTk.PhotoImage(formula) for formula in formulas]
+
+label_imagen = []
+for imagen in imagenes:
+    label = tk.Label(win, image=imagen, borderwidth=0)
+    label_imagen.append(label)
+
+show_formulas_var = tk.IntVar()
+
+def formulas():
+    if show_formulas_var.get() == 1:    
+        choice = selectVar.get()
+        if choice == 'FDA':
+            label_imagen[0].place(x=0,y=300)
+            label_imagen[1].place_forget()
+            label_imagen[2].place_forget()
+        elif choice == 'MV':
+            label_imagen[1].place(x=0,y=300)
+            label_imagen[0].place_forget()
+            label_imagen[2].place_forget() 
+        elif choice == 'VEc':
+            label_imagen[2].place(x=0,y=300)
+            label_imagen[1].place_forget()
+            label_imagen[0].place_forget()
+    else:
+        for label in label_imagen:
+            label.place_forget()    
 
 
-def formulas(*args):
-    return
+
 def toggleTheme(): #Not work
     theme = win._get_appearance_mode()
     print(theme)
@@ -199,6 +237,7 @@ def calcInv(desplazamiento):
         msg.showerror(
                 'Valores incompletos', 'Porfavor ingresar todos los valores solicitados')
     return
+
 # -------------------------------------------------------------#
 # Funciones Parametros
 # -------------------------------------------------------------#
@@ -300,7 +339,6 @@ def calc():
     valores = [f, d, aG, aR, m, v, vi, vf]
     parametros = [rType, rNum, dire, movimiento, velocidad]
     return valores, parametros
-
 
 def refreshPmt(*args):
     choice = selectVar.get()
@@ -439,19 +477,21 @@ labelVf = ctk.CTkLabel(framePmt, text='Velocidad Final (m/s²)',
 # -------------------------------------------------------------#
 labelTitleTyEc = ctk.CTkLabel(frameMenuCalc, text='¿Que desea calcular?', 
                               text_color='white', fg_color='#2f3123')
-
 selectVar = tk.StringVar()
 toggleManual = tk.IntVar()
 checkRoce = tk.IntVar(value=0)
 rbtn1 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar)
+    frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar, command=formulas)
 rbtn2 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar)
+    frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar, command=formulas)
 rbtn3 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar)
+    frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar, command=formulas)
 rbtn4 = ctk.CTkRadioButton(
     frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual')
-rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', variable=checkRoce)
+rbtn5 = ctk.CTkSwitch(
+    frameMenuCalc,text='Implementar Roce', variable=checkRoce)
+rbtn6 = ctk.CTkSwitch(
+    frameMenuCalc, text="Modelo Matematico", variable=show_formulas_var, command=formulas)
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
 rbtn1.place(x=30, y=100)
@@ -459,6 +499,7 @@ rbtn2.place(x=30, y=140)
 rbtn3.place(x=30, y=180)
 rbtn4.place(x=30, y=220)
 rbtn5.place(x=30, y=260)
+rbtn6.place(x=30, y=300)
 selectVar.trace('w', refreshPmt)
 selectVar.trace('w', formulas)
 selectVar.trace('w', toggleMovManual)
