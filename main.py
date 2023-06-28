@@ -1,3 +1,4 @@
+# Librerias importadas
 import tkinter as tk
 from tkinter import messagebox as msg
 import customtkinter as ctk
@@ -40,7 +41,7 @@ frameMenuCalc.place(x=960, y=0)
 contador = 1
 
 
-def screenshot():
+def screenshot(): #Funcion llamada por el Boton Screenshot
     global contador
     x = win.winfo_rootx()
     y = win.winfo_rooty()
@@ -52,19 +53,11 @@ def screenshot():
 
 def formulas(*args):
     return
-def toggleTheme(): #Not work
-    theme = win._get_appearance_mode()
-    print(theme)
-    if theme == 'light':
-        win.set_appearance_mode('dark')
-    else:
-        win.set_appearance_mode('light')
-    win.update()
 # -------------------------------------------------------------#
 # Funciones Caja
 # -------------------------------------------------------------#
-moving = False
-def confirmClose():
+moving = False # Bandera utilizada para confirmacion de movimiento
+def confirmClose(): # Confirma si quieres salir mientras se mueve la caja
     if moving:
         cierre = msg.askyesno('Salir', 'Movimiento ejecutandose, ¿Desea salir de todas formas?')
         if cierre:
@@ -73,7 +66,7 @@ def confirmClose():
             pass
     else:
         win.destroy()
-def mueveCaja(resultado,direccion,velocidad):
+def mueveCaja(resultado,direccion,velocidad): # Funcion que mueve la caja para el trabajo y la energia cinetica
     global moving
     try:
         if velocidad == 0 or direccion == 0 or resultado == 0:
@@ -90,46 +83,55 @@ def mueveCaja(resultado,direccion,velocidad):
             rango = maxVelTime - minVelTime
             escala = velocidad / (velocidad + 10)
             velTime = maxVelTime - (rango * escala)
+        # Ciclo que mueve la caja hasta llegar al final de la pantalla
         while disRecorrida < desplazamiento:
             coords = canvasCaja.coords(fig)
             esqDer = coords[2] + direccion
             esqIzq = coords[0] + direccion
             canvasCaja.move(fig, direccion, 0)
             disRecorrida += 1
+            # Comprueba si se ha llegado al final, por cualquiera de los dos lados
             if esqDer > 720 or esqIzq < 0:
                     posIni()
                     break
             canvasCaja.update()
-            print(f'velTime: {velTime}')
+            # print(f'velTime: {velTime}')
+            time.sleep(velTime)
+        moving = False
+    except KeyboardInterrupt: #Si se trata de cerrar la ventana durante un movimiento, te pide confirmacion de que quieres salir
+        print('Programa interrumpido')
+        confirmClose()
+    return
+win.protocol('WM_DELETE_WINDOW', confirmClose)
+def mueveCajaVEc(direccion = 1, vi = 0, vf = 0): # Funcion que mueve la caja para la variacion de la energia cinetica
+    global moving
+    try:
+        moving = True
+        desplazamiento = 540
+        disRecorrida = 0
+        rango = 0.2 - 0.0002
+        direccion = 1
+        while disRecorrida < desplazamiento:
+            escala = vf / (vi + (vf - vi)*((disRecorrida / 100)))
+            velTime = (0.2 - (rango * escala)) /10
+            velTime = abs(velTime)
+            coords = canvasCaja.coords(fig)
+            esqDer = coords[2] + direccion
+            esqIzq = coords[0] + direccion
+            canvasCaja.move(fig, direccion, 0)
+            disRecorrida += 1
+            if esqDer >= 720 or esqIzq < 0:
+                posIni()
+                break
+            canvasCaja.update()
+            # print(f'velTime en {disRecorrida}: {velTime}')
             time.sleep(velTime)
         moving = False
     except KeyboardInterrupt:
         print('Programa interrumpido')
         confirmClose()
     return
-win.protocol('WM_DELETE_WINDOW', confirmClose)
-def mueveCajaVEc(direccion = 1, vi = 0, vf = 0):
-    desplazamiento = 540
-    disRecorrida = 0
-    rango = 0.2 - 0.0002
-    direccion = 1
-    while disRecorrida < desplazamiento:
-        escala = vf / (vi + (vf - vi)*((disRecorrida / 100)))
-        velTime = (0.2 - (rango * escala)) /10
-        velTime = abs(velTime)
-        coords = canvasCaja.coords(fig)
-        esqDer = coords[2] + direccion
-        esqIzq = coords[0] + direccion
-        canvasCaja.move(fig, direccion, 0)
-        disRecorrida += 1
-        if esqDer >= 720 or esqIzq < 0:
-            posIni()
-            break
-        canvasCaja.update()
-        print(f'velTime en {disRecorrida}: {velTime}')
-        time.sleep(velTime)
-    return
-def BtnRun():
+def BtnRun(): # Funcion que se ejecuta al presionar el boton run
     canvasCaja.delete('linea')
     choice = selectVar.get()
     roce = checkRoce.get()
@@ -151,7 +153,7 @@ def BtnRun():
     else:
         mueveCaja(resultado,direccion, velocidad)
 
-def posIni():
+def posIni(): # Funcion utilizada para resetear la posicion de la caja, entre otras cosas
     choice = selectVar.get()
     x1,y1,x2,y2 = canvasCaja.coords(fig)
     posI = 0
@@ -168,7 +170,7 @@ def posIni():
             despX = abs(x1-posI)
         canvasCaja.move(fig, despX, 0)
 
-def PintaLinea(movimiento, direccion):
+def PintaLinea(movimiento, direccion): #Pinta la linea de movimiento segun la direccion y el movimiento
     choice = selectVar.get()
     canvasCaja.delete('linea')
     if movimiento:
@@ -186,7 +188,7 @@ def PintaLinea(movimiento, direccion):
     else:
         return
 posX = None
-def toggleMovManual(*args):
+def toggleMovManual(*args): # Activa/ Desactiva el movimiento manual
     choice = selectVar.get()
     if choice == 'Manual':
         canvasCaja.bind('<Button-1>', pickBox)
@@ -199,7 +201,7 @@ def toggleMovManual(*args):
         canvasCaja.unbind('<ButtonRelease-1>')
     return
 
-def pickBox(event):
+def pickBox(event): #Detecta el click en la caja
     global posX
     x1,y1,x2,y2 = canvasCaja.coords(fig)
     if x1 <= event.x <= x2 and y1 <= event.y <= y2:
@@ -207,7 +209,7 @@ def pickBox(event):
     return
 
 desp = 0
-def moveOn(event):
+def moveOn(event): #Luego de haber hecho un click en la caja, detecta el movimiento del mouse en la pantalla y mueve la caja con el mouse
     global posX,desp
     if posX is not None:
         x1,y2,x2,y2 = canvasCaja.coords(fig)
@@ -225,12 +227,12 @@ def moveOn(event):
                 return
     return
 
-def letItgo(event):
+def letItgo(event): #Detecta cuando soltamos el click en la caja
     global posX
     posX = None
     return
 
-def calcInv(desplazamiento):
+def calcInv(desplazamiento): #Calcula el movimiento de la caja segun el desplazamiento manual
     choice = selectVar.get()
     try:
         fuerza = float(entryF.get())
@@ -245,7 +247,7 @@ def calcInv(desplazamiento):
 # Funciones Parametros
 # -------------------------------------------------------------#
 
-def calc():
+def calc(): #Funcion de calculo general, aca pasa la magia
     global coeficiente
     choice = selectVar.get()
     f = d = aG = aR = m = v = vi = vf = 0
@@ -343,7 +345,7 @@ def calc():
     return valores, parametros
 
 
-def refreshPmt(*args):
+def refreshPmt(*args): # Funcion encargada de poner los widgets en pantalla segun la opcion que hayamos escogido
     choice = selectVar.get()
     roce = checkRoce.get()
     posIni()
@@ -403,7 +405,7 @@ def refreshPmt(*args):
 # -------------------------------------------------------------#
 # Funciones Parametros - Roce
 # -------------------------------------------------------------#
-def getCoefRoce(event):
+def getCoefRoce(event): # Detecta los materiales escojidos en los comboboxes y llama a calcRoce
     global coeficiente
     caja = varCaja.get()
     suelo = varSuelo.get()
@@ -414,7 +416,7 @@ def getCoefRoce(event):
         labelRr.configure(text=f'El coeficiente de roce es {coeficiente}')
     return coeficiente
 
-def calcRoce(caja, suelo):
+def calcRoce(caja, suelo): # "Calcula" el coeficiente de roce
     roceDict = {
         ('Madera', 'Madera'): 0.45,
         ('Madera', 'Acero'): 0.5,
@@ -454,8 +456,6 @@ labelDl = ctk.CTkLabel(canvasCaja, text='Desplazamiento: ', font=(
 fig = canvasCaja.create_rectangle(
     posIniX, posIniY, 451, 400, fill='#ff6a36')
 suelo = canvasCaja.create_rectangle(0,400,720,500,fill='#A18072',outline='#A18072')
-switchTheme = ctk.CTkSwitch(canvasCaja, text='Modo Oscuro',command=toggleTheme,text_color='black')
-# switchTheme.place(relx=0.8, y=80, anchor='center')
 # -------------------------------------------------------------#
 # Elementos Parametros
 # -------------------------------------------------------------#
@@ -529,7 +529,7 @@ labelRr = ctk.CTkLabel(framePmt, text=f'El coeficiente de roce es {0}',text_colo
 def style():
     menuSideBtns = [btnSS, btnRun, btnStop]
     for btn in menuSideBtns:
-        btn.configure(font=("Arial",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"))
+        btn.configure(font=("Arial",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"), hover_color=("gray"), corner_radius=0)
     calcMenuBtns = [rbtn1, rbtn2, rbtn3, rbtn4]
     colorsBtn = ['Yellow', 'Light Green', 'dark Orange', 'Light Blue']
     for btn,color in zip(calcMenuBtns,colorsBtn):
@@ -537,12 +537,15 @@ def style():
     entrys = [entryF, entryD, entryA, entryM, entryV, entryVf, entryVi]
     for entry in entrys:
         entry.configure(fg_color='white',border_color='gray',text_color='black')
-def checkEntrys(text):
+# -------------------------------------------------------------#
+# Validaciones
+# -------------------------------------------------------------#
+def checkEntrys(text): #Impide que el usuario ingrese letras en los entrys
     if text.isdigit() or text == '':
         return True
     else:
         return False
-def checkAngle(text):
+def checkAngle(text): # Limita el angulo ingresado a un numero entre 0 y 180
     roce = checkRoce.get()
     if text == '':
         return True 
@@ -554,11 +557,11 @@ def checkAngle(text):
             return False
     except ValueError:
         return False
-def validate(widget, function):
+def validate(widget, function): #Valida los entrys
     validation = widget.register(function)
     widget.configure(validate = 'key', validatecommand = (validation, '%P'))
 
-def applyValidate():
+def applyValidate(): #Aplica las validaciones
     entrys = [entryF, entryD, entryA, entryM, entryV, entryVf, entryVi]
     for entry in entrys:
         if entry == entryA:
