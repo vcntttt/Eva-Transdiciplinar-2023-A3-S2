@@ -191,13 +191,9 @@ def moveOn(event):
         newX2 = x2 + despX
         canvas_width = canvasCaja.winfo_width()
         if newX1 >= 0 and newX2 <= canvas_width:
-            desp = abs(newX2 - x2)  # Calcular el desplazamiento actualizado
+            desp = newX1  # Calcular el desplazamiento actualizado
             labelDl.place(x=160, y=95)
-            if desp != 0:
-                labelDl.configure(text=f'Desplazamiento: {int(desp)} metros')
-            else:
-                labelDl.configure(text='Desplazamiento: 0 metros')  # Desplazamiento es 0
-
+            labelDl.configure(text=f'Desplazamiento: {int(desp)} metros')
             choice = selectVar.get()
             try:
                 fuerza = float(entryF.get())
