@@ -63,33 +63,51 @@ def toggleTheme(): #Not work
 # -------------------------------------------------------------#
 # Funciones Caja
 # -------------------------------------------------------------#
-
-
-def mueveCaja(direccion = 1,velocidad = 1):
-    choice = selectVar.get()
-    desplazamiento = 1000
-    disRecorrida = 0
-    maxVelTime = 0.2
-    minVelTime = 0.00002
-    velTime = 1
-    if choice == "FDA" or choice == 'MV':
-        print(f'Velocidad: {velocidad}')
-        rango = maxVelTime - minVelTime
-        escala = velocidad / (velocidad + 10)
-        velTime = maxVelTime - (rango * escala)
-    while disRecorrida < desplazamiento:
-        coords = canvasCaja.coords(fig)
-        esqDer = coords[2] + direccion
-        esqIzq = coords[0] + direccion
-        canvasCaja.move(fig, direccion, 0)
-        disRecorrida += 1
-        if esqDer > 720 or esqIzq < 0:
-                posIni()
-                break
-        canvasCaja.update()
-        print(f'velTime: {velTime}')
-        time.sleep(velTime)
+moving = False
+def confirmClose():
+    if moving:
+        cierre = msg.askyesno('Salir', 'Movimiento ejecutandose, ¿Desea salir de todas formas?')
+        if cierre:
+            win.destroy()
+        else:
+            pass
+    else:
+        win.destroy()
+def mueveCaja(resultado,direccion,velocidad):
+    global moving
+    try:
+        if velocidad == 0 or direccion == 0 or resultado == 0:
+            return
+        moving = True
+        choice = selectVar.get()
+        desplazamiento = 1000
+        disRecorrida = 0
+        maxVelTime = 0.2
+        minVelTime = 0.00002
+        velTime = 1
+        if choice == "FDA" or choice == 'MV':
+            print(f'Velocidad: {velocidad}')
+            rango = maxVelTime - minVelTime
+            escala = velocidad / (velocidad + 10)
+            velTime = maxVelTime - (rango * escala)
+        while disRecorrida < desplazamiento:
+            coords = canvasCaja.coords(fig)
+            esqDer = coords[2] + direccion
+            esqIzq = coords[0] + direccion
+            canvasCaja.move(fig, direccion, 0)
+            disRecorrida += 1
+            if esqDer > 720 or esqIzq < 0:
+                    posIni()
+                    break
+            canvasCaja.update()
+            print(f'velTime: {velTime}')
+            time.sleep(velTime)
+        moving = False
+    except KeyboardInterrupt:
+        print('Programa interrumpido')
+        confirmClose()
     return
+win.protocol('WM_DELETE_WINDOW', confirmClose)
 def mueveCajaVEc(direccion = 1, vi = 0, vf = 0):
     desplazamiento = 540
     disRecorrida = 0
@@ -104,7 +122,7 @@ def mueveCajaVEc(direccion = 1, vi = 0, vf = 0):
         esqIzq = coords[0] + direccion
         canvasCaja.move(fig, direccion, 0)
         disRecorrida += 1
-        if esqDer > 720 or esqIzq < 0:
+        if esqDer >= 720 or esqIzq < 0:
             posIni()
             break
         canvasCaja.update()
@@ -112,20 +130,26 @@ def mueveCajaVEc(direccion = 1, vi = 0, vf = 0):
         time.sleep(velTime)
     return
 def BtnRun():
+    canvasCaja.delete('linea')
     choice = selectVar.get()
     roce = checkRoce.get()
     if choice == 'Manual':
         return
     posIni()
     values, parametros = calc()
-    movimiento,direccion, velocidad = map(float, parametros[2:5])
+    resultado = float(parametros[1])
+    direccion = float(parametros[2])
+    movimiento = float(parametros[3])
+    velocidad = float(parametros[4])
     vi = vf = 0
+    print(f'Movimiento: {movimiento} ; Velocidad: {velocidad} ; Direccion: {direccion} ; Roce: {roce} ; Resultado: {resultado} ; Choice: {choice}') 
     PintaLinea(movimiento, direccion)
     if choice == 'VEc':
-        vi, vf = map(float, values[6:8])
+        vi = float(values[6])
+        vf = float(values[7])
         mueveCajaVEc(direccion, vi, vf)
     else:
-        mueveCaja(direccion, velocidad)
+        mueveCaja(resultado,direccion, velocidad)
 
 def posIni():
     choice = selectVar.get()
@@ -250,9 +274,6 @@ def calc():
                 print(f'neto: {wNeto}')
                 if wNeto < 0:
                     movimiento = 0
-                    print('Se necesita aplicar mas fuerza')
-                # Fuerza necesaria para Movimiento
-                    fMov = 0
                 else:
                     movimiento = d
                     velocidad = f
@@ -299,6 +320,7 @@ def calc():
             eCi = (0.5 * m) * (vi ** 2)
             if u != 0:
                 w = eCf - eCi
+                wFr = u * m * g * d * math.cos(rad180)
                 wNeto = w + wFr
             else:
                 wNeto = eCf - eCi
@@ -326,10 +348,11 @@ def refreshPmt(*args):
     roce = checkRoce.get()
     posIni()
     canvasCaja.delete('linea')
-    widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelMC,materialCaja,labelMS,materialSuelo,labelRr]
+    widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelMC,materialCaja,labelMS,materialSuelo,labelRr,switchRoce]
 
     for widget in widgetsForget:
         widget.place_forget()
+
     if roce == 1:
         x = [0.4,0.7,0.7,0.6]
         y = [50,80,110,140]
@@ -346,11 +369,13 @@ def refreshPmt(*args):
         entryF.place(relx = x[0], y = y[1])
         labelD.place(relx = x[2], y = y[0])
         entryD.place(relx = x[2], y = y[1])
+        switchRoce.place(x=30, y=260)
         if roce == 1:
             labelM.place(relx = x[0], y = y[2])
             entryM.place(relx = x[0], y = y[3])
             labelA.place(relx = x[2], y = y[2])
             entryA.place(relx = x[2], y = y[3])
+
         else:
             labelA.place(relx = x[3], y = y[2])
             entryA.place(relx = x[3], y = y[3])
@@ -366,9 +391,13 @@ def refreshPmt(*args):
         entryVf.place(relx  = x[2], y = y[1])
         labelM.place(relx = x[3], y = y[2])
         entryM.place(relx = x[3], y = y[3])
+        switchRoce.place(x=30, y=260)
+
     if choice == 'Manual':
         labelF.place(relx=0.4,y=70)
         entryF.place(relx=0.4, y = 100)
+        switchRoce.place(x=30, y=260)
+
     return 
 
 # -------------------------------------------------------------#
@@ -404,11 +433,10 @@ def calcRoce(caja, suelo):
 labelTitleM = ctk.CTkLabel(frameMenu, text='Menu',
                             text_color='white', font=("Perpetua",23))
 labelTitleM.place(relx=0.5, anchor='center', y=50)
-btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot, font=("Felix Titling",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"))
-btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot, font=("Felix Titling",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"))
+btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot)
+btnRun = ctk.CTkButton(frameMenu, text='Run', command=BtnRun)
+btnStop = ctk.CTkButton(frameMenu,text='Reseteo Manual', command=posIni)
 btnSS.place(relx=0.5, anchor='center', y=130)
-btnRun = ctk.CTkButton(frameMenu, text='Run', font=("Felix Titling",14), fg_color= ("Orange"), text_color=("black"), command=BtnRun)
-btnStop = ctk.CTkButton(frameMenu,text='Reseteo Manual', font=("Felix Titling",14), fg_color= ("orange"), text_color=("Black"), command=posIni)
 btnRun.place(relx=0.5, y=180, anchor='center')
 btnStop.place(relx = 0.5,y = 230,anchor = 'center')
 # Modelo Matematico
@@ -433,7 +461,7 @@ switchTheme = ctk.CTkSwitch(canvasCaja, text='Modo Oscuro',command=toggleTheme,t
 # -------------------------------------------------------------#
 entryF = ctk.CTkEntry(framePmt)
 entryD = ctk.CTkEntry(framePmt)
-entryA = ctk.CTkEntry(framePmt)
+entryA = ctk.CTkEntry(framePmt, placeholder_text='0 - 180°')
 entryM = ctk.CTkEntry(framePmt)
 entryV = ctk.CTkEntry(framePmt)
 entryVi = ctk.CTkEntry(framePmt)
@@ -454,6 +482,8 @@ labelVi = ctk.CTkLabel(framePmt, text='Velocidad Inicial (m/s²)',
                        text_color='black', fg_color='#f1cc7a')
 labelVf = ctk.CTkLabel(framePmt, text='Velocidad Final (m/s²)', 
                        text_color='black', fg_color='#f1cc7a')
+labelAngle = ctk.CTkLabel(framePmt, text='Solo se pueden ingresas angulos entre 0 y 180', 
+                          text_color='black', fg_color='#f1cc7a')
 # -------------------------------------------------------------#
 # Elementos Menu Calculos
 # -------------------------------------------------------------#
@@ -464,21 +494,20 @@ selectVar = tk.StringVar()
 toggleManual = tk.IntVar()
 checkRoce = tk.IntVar(value=0)
 rbtn1 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar, text_color = "Yellow", font=("Calisto MT",12), fg_color='red')
+    frameMenuCalc, text='Trabajo ', value='FDA', variable=selectVar)
 rbtn2 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar, text_color= "Yellow", font=("Calisto MT",12), fg_color="Light Green")
+    frameMenuCalc, text='Energia Cinetica', value='MV', variable=selectVar)
 rbtn3 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar, text_color= "Yellow", font=("Calisto MT",12), fg_color="dark Orange")
+    frameMenuCalc, text='Trabajo segun \u0394Ec', value='VEc', variable=selectVar)
 rbtn4 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual', text_color= "Yellow", font=("Calisto MT",12), fg_color='Light Blue')
-rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', variable=checkRoce, text_color= "Yellow", font=("Calisto MT",12))
+    frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual')
+switchRoce = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', variable=checkRoce, text_color= "Yellow", font=("Calisto MT",12))
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
 rbtn1.place(x=30, y=100)
 rbtn2.place(x=30, y=140)
 rbtn3.place(x=30, y=180)
 rbtn4.place(x=30, y=220)
-rbtn5.place(x=30, y=260)
 selectVar.trace('w', refreshPmt)
 selectVar.trace('w', formulas)
 selectVar.trace('w', toggleMovManual)
@@ -494,4 +523,48 @@ labelMS = ctk.CTkLabel(framePmt, text='Material Suelo',text_color='black')
 materialCaja = ctk.CTkComboBox(framePmt, values=materiales, state='readonly',command=getCoefRoce,variable=varCaja)
 materialSuelo = ctk.CTkComboBox(framePmt, values=materiales, state='readonly',command=getCoefRoce,variable=varSuelo)
 labelRr = ctk.CTkLabel(framePmt, text=f'El coeficiente de roce es {0}',text_color='black')
+# -------------------------------------------------------------#
+# Estilizado
+# -------------------------------------------------------------#
+def style():
+    menuSideBtns = [btnSS, btnRun, btnStop]
+    for btn in menuSideBtns:
+        btn.configure(font=("Arial",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"))
+    calcMenuBtns = [rbtn1, rbtn2, rbtn3, rbtn4]
+    colorsBtn = ['Yellow', 'Light Green', 'dark Orange', 'Light Blue']
+    for btn,color in zip(calcMenuBtns,colorsBtn):
+        btn.configure(fg_color=color,text_color='Yellow',font=("Arial",14))
+    entrys = [entryF, entryD, entryA, entryM, entryV, entryVf, entryVi]
+    for entry in entrys:
+        entry.configure(fg_color='white',border_color='gray',text_color='black')
+def checkEntrys(text):
+    if text.isdigit() or text == '':
+        return True
+    else:
+        return False
+def checkAngle(text):
+    roce = checkRoce.get()
+    if text == '':
+        return True 
+    try:
+        angulo = float(text)
+        if 0 <= angulo <= 180:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+def validate(widget, function):
+    validation = widget.register(function)
+    widget.configure(validate = 'key', validatecommand = (validation, '%P'))
+
+def applyValidate():
+    entrys = [entryF, entryD, entryA, entryM, entryV, entryVf, entryVi]
+    for entry in entrys:
+        if entry == entryA:
+            validate(entry, checkAngle)
+        else:
+            validate(entry, checkEntrys)    
+applyValidate()
+style()
 win.mainloop()
