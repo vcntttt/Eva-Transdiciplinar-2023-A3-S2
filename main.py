@@ -4,7 +4,7 @@ from tkinter import messagebox as msg
 import customtkinter as ctk
 import time
 import math
-from PIL import ImageGrab
+from PIL import ImageGrab, ImageTk, Image
 nRes = [1200, 800]
 coeficiente = 0
 # Dimensiones (ojo, no son coordenadas, es lo que miden los espacios)
@@ -50,9 +50,62 @@ def screenshot(): #Funcion llamada por el Boton Screenshot
     contador += 1
     return
 
+#se crea una lista para almacenar las imagenes de las formulas en latex
+formulas = []
+#cargamos las imagenes de las formulas latex y las agregamos a la lista 
+formulas.append(Image.open("formulas/Trabajo.png"))
+formulas.append(Image.open("formulas/energiaCinetica.png"))
+formulas.append(Image.open("formulas/VariacionEc.png"))
+formulas.append(Image.open("formulas/TrabajoRoce.png"))
+formulas.append(Image.open("formulas/TrabajoNeto.png"))
+formulas.append(Image.open("formulas/SimbologiaW.png"))
+formulas.append(Image.open("formulas/SimbologiaEc.png"))
+formulas.append(Image.open("formulas/SimbologiaDelta.png"))
+#utilizamos la expresion ImageTK.PhotoImage para que tome un elemento de la lista "Formulas" para
+#transformar las imagenes de la lista en una PhotoImage para asi utilizar las fotos agregadas
+imagenes = [ImageTk.PhotoImage(formula) for formula in formulas]
+#creamos otra lista para agregar las fotos "label" que vamos a almacenar
+label_imagen = []
+#se itera sobre la lista imagen y crea un objeto label para cada imagen, luego lo agrega a la lista
+for imagen in imagenes:
+    label = tk.Label(win, image=imagen, borderwidth=0)
+    label_imagen.append(label)
+#esta variable se usa para controlar si se muestran las formulas o no
+formulasVar = tk.IntVar()
+simbologiaVar = tk.IntVar()
 
-def formulas(*args):
-    return
+#verifica si al apretar el boton de mostrar formulas se muestren las formulas cuando presiones 
+#los botones de lo que quieras calcular, las posiciona en cierta parte de la pantalla
+#y tambien usa el place_forget para que al apretar otro boton se oculten las formulas
+def formulas():
+    form = formulasVar.get()
+    simb = simbologiaVar.get()
+    for i in label_imagen:
+        i.place_forget()
+    if form == 1 or simb == 1:
+        switchSimb.place(x=30,y=340)
+    else:
+        switchSimb.place_forget()
+    if form == 1:
+        choice = selectVar.get()
+        roce = checkRoce.get()
+        if choice == 'FDA':
+            label_imagen[0].place(x=0,y=300)
+            if simb == 1:
+                label_imagen[5].place(x=0,y=450) 
+        if choice == 'MV':
+            label_imagen[1].place(x=0,y=300)
+            if simb == 1:
+                label_imagen[6].place(x=0,y=450)
+        if choice == 'VEc':
+            label_imagen[2].place(x=0,y=300)
+            if simb == 1:
+                label_imagen[7].place(x=0,y=450)
+        if choice == 'Manual':
+            label_imagen[0].place(x=0,y=300)
+            if simb == 1:
+                label_imagen[5].place(x=0,y=450)  
+        return 
 # -------------------------------------------------------------#
 # Funciones Caja
 # -------------------------------------------------------------#
@@ -356,10 +409,11 @@ def calc(): #Funcion de calculo general, aca pasa la magia
 def refreshPmt(*args): # Funcion encargada de poner los widgets en pantalla segun la opcion que hayamos escogido
     choice = selectVar.get()
     roce = checkRoce.get()
+    form = formulasVar.get()
     posIni()
+    formulas()
     canvasCaja.delete('linea')
-    widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelMC,materialCaja,labelMS,materialSuelo,labelRr,switchRoce]
-
+    widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelMC,materialCaja,labelMS,materialSuelo,labelRr,switchRoce,switchMM,switchSimb]
     for widget in widgetsForget:
         widget.place_forget()
 
@@ -380,6 +434,7 @@ def refreshPmt(*args): # Funcion encargada de poner los widgets en pantalla segu
         labelD.place(relx = x[2], y = y[0])
         entryD.place(relx = x[2], y = y[1])
         switchRoce.place(x=30, y=260)
+        switchMM.place(x=30, y=290)
         if roce == 1:
             labelM.place(relx = x[0], y = y[2])
             entryM.place(relx = x[0], y = y[3])
@@ -394,6 +449,7 @@ def refreshPmt(*args): # Funcion encargada de poner los widgets en pantalla segu
         entryM.place(relx = x[0], y =  y[1])
         labelV.place(relx = x[1], y =  y[0])
         entryV.place(relx = x[1], y =  y[1])
+        switchMM.place(x=30, y=290)
     if choice == 'VEc':
         labelVi.place(relx  = x[0], y = y[0])
         entryVi.place(relx  = x[0], y = y[1])
@@ -402,13 +458,15 @@ def refreshPmt(*args): # Funcion encargada de poner los widgets en pantalla segu
         labelM.place(relx = x[3], y = y[2])
         entryM.place(relx = x[3], y = y[3])
         switchRoce.place(x=30, y=260)
+        switchMM.place(x=30, y=290)
 
     if choice == 'Manual':
         labelF.place(relx=0.4,y=70)
         entryF.place(relx=0.4, y = 100)
-
+        switchMM.place(x=30, y=290)
+    if form == 1:
+        switchSimb.place(x=30,y=340)
     return 
-
 # -------------------------------------------------------------#
 # Funciones Parametros - Roce
 # -------------------------------------------------------------#
@@ -508,6 +566,10 @@ rbtn3 = ctk.CTkRadioButton(
     frameMenuCalc, text='Trabajo segun \u0394Ec', value='VEc', variable=selectVar)
 rbtn4 = ctk.CTkRadioButton(
     frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual')
+switchMM = ctk.CTkSwitch(
+    frameMenuCalc, text="Modelo Matematico", variable=formulasVar, command=formulas)
+switchSimb = ctk.CTkSwitch(
+    frameMenuCalc, text="Simbologia",variable=simbologiaVar,command=formulas)
 switchRoce = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', variable=checkRoce, text_color= "Yellow", font=("Calisto MT",12))
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
@@ -515,8 +577,8 @@ rbtn1.place(x=30, y=100)
 rbtn2.place(x=30, y=140)
 rbtn3.place(x=30, y=180)
 rbtn4.place(x=30, y=220)
+# Rastro de Variables
 selectVar.trace('w', refreshPmt)
-selectVar.trace('w', formulas)
 selectVar.trace('w', toggleMovManual)
 checkRoce.trace('w', refreshPmt)
 # -------------------------------------------------------------#
@@ -544,6 +606,9 @@ def style():
     entrys = [entryF, entryD, entryA, entryM, entryV, entryVf, entryVi]
     for entry in entrys:
         entry.configure(fg_color='white',border_color='gray',text_color='black')
+    switchs= [switchSimb, switchRoce, switchMM]
+    for switch in switchs:
+        switch.configure(text_color='Yellow', font=("Arial",14), progress_color='Yellow')
 # -------------------------------------------------------------#
 # Validaciones
 # -------------------------------------------------------------#
