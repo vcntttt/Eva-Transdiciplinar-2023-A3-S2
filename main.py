@@ -96,10 +96,10 @@ def formulas():
                 label_imagen[5].place(x=0,y=450) 
             if roce == 1:
                 label_imagen[3].place(x=960, y=430)
-                label_imagen[4].place(x=0, y=560)
+                label_imagen[4].place(x=0, y=430)
                 label_imagen[5].place_forget()
                 if simb == 1:
-                    label_imagen[8].place(x=0, y=690)
+                    label_imagen[8].place(x=0, y=560)
                 else:
                     label_imagen[5].place_forget()
         if choice == 'MV':
@@ -111,11 +111,11 @@ def formulas():
             if simb == 1:
                 label_imagen[7].place(x=0,y=480)
             if roce == 1:
-                label_imagen[3].place(x=0,y=460)
-                label_imagen[9].place(x=0,y=600)
+                label_imagen[3].place(x=960,y=460)
+                label_imagen[9].place(x=0,y=480)
                 label_imagen[7].place_forget()
                 if simb ==1:
-                    label_imagen[7].place(x=0, y=690)
+                    label_imagen[7].place(x=0, y=650)
                 else:
                     label_imagen[7].place_forget()
         if choice == 'Manual':
