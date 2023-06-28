@@ -134,9 +134,9 @@ def posIni():
     if choice == 'FDA' or choice == 'MV':
         posI = posIniX
     elif choice == 'VEc' or choice == 'Manual':
-        posI = 0
+        posI = posIniX2
     else:
-        posI = posIniX
+        posI = posIniX2
     if x1 != posI:            
         if x1 > posI:
             despX = -(abs(x1-posI))
@@ -162,46 +162,46 @@ def PintaLinea(movimiento, direccion):
     else:
         return
 posX = None
+desp = 0
 def toggleMovManual(*args):
     choice = selectVar.get()
     if choice == 'Manual':
         canvasCaja.bind('<Button-1>', pickBox)
         canvasCaja.bind('<B1-Motion>', moveOn)
-        canvasCaja.bind('<ButtonRelease-1>',letItgo)
+        canvasCaja.bind('<ButtonRelease-1>', letItgo)
     else:
         posIni()
         canvasCaja.unbind('<Button-1>')
         canvasCaja.unbind('<B1-Motion>')
         canvasCaja.unbind('<ButtonRelease-1>')
-    return
 
 def pickBox(event):
     global posX
-    x1,y1,x2,y2 = canvasCaja.coords(fig)
+    x1, y1, x2, y2 = canvasCaja.coords(fig)
     if x1 <= event.x <= x2 and y1 <= event.y <= y2:
         posX = event.x
-    return
 
-desp = 0
 
 def moveOn(event):
     global posX, desp
     if posX is not None:
-        x1, y2, x2, y2 = canvasCaja.coords(fig)
+        x1, y1, x2, y2 = canvasCaja.coords(fig)
         despX = event.x - posX
         newX1 = x1 + despX
         newX2 = x2 + despX
-        if newX1 >= 0 and newX2 <= canvasCaja.winfo_width():
-            desp = abs(x1 - posIniX)
+        canvas_width = canvasCaja.winfo_width()
+        if newX1 >= 0 and newX2 <= canvas_width:
+            desp = abs(newX2 - x2)  # Calcular el desplazamiento actualizado
             labelDl.place(x=320, y=200)
-            labelDl.configure(text=f'Desplazamiento: {int(desp)} metros')
+            if desp != 0:
+                labelDl.configure(text=f'Desplazamiento: {int(desp)} metros')
 
             choice = selectVar.get()
             try:
                 fuerza = float(entryF.get())
                 if desp == 0:
-                    return  # No realizar ninguna acción de movimiento si el desplazamiento es 0
-                trabajo = calcInv(desp)
+                    return
+                trabajo = calcInv(desp, fuerza)  # Pasar también la fuerza como argumento
                 print(f'Trabajo: {trabajo}')
                 canvasCaja.move(fig, despX, 0)
                 posX = event.x
@@ -216,7 +216,7 @@ def moveOn(event):
 def calcInv(desplazamiento, fuerza):
     trabajo = fuerza * desplazamiento
     print(f'Trabajo: {trabajo}')
-
+    return trabajo
 
 
 def letItgo(event):
@@ -224,17 +224,15 @@ def letItgo(event):
     posX = None
     return
 
-def calcInv(desplazamiento):
-    choice = selectVar.get()
+def calcInv(desplazamiento, fuerza):
     try:
-        fuerza = float(entryF.get())
         trabajo = fuerza * desplazamiento
         print(f'Trabajo: {trabajo}')
-
+        return trabajo
     except ValueError:
-        msg.showerror(
-                'Valores incompletos', 'Porfavor ingresar todos los valores solicitados')
-    return
+        msg.showerror('Valores incompletos', 'Por favor ingresar todos los valores solicitados')
+        return 0
+
 # -------------------------------------------------------------#
 # Funciones Parametros
 # -------------------------------------------------------------#
@@ -435,6 +433,7 @@ btnStop.place(relx = 0.5,y = 230,anchor = 'center')
 # -------------------------------------------------------------#
 posIniX = 271
 posIniY = 250
+posIniX2=0
 labelTitleC = ctk.CTkLabel(canvasCaja, text='TRABAJO Y ENERGIA', 
                            text_color='black', font=("Algerian",20))
 labelFN = ctk.CTkLabel(canvasCaja, text='',
