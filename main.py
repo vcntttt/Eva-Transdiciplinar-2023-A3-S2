@@ -61,6 +61,7 @@ formulas.append(Image.open("formulas/TrabajoNeto.png"))
 formulas.append(Image.open("formulas/SimbologiaW.png"))
 formulas.append(Image.open("formulas/SimbologiaEc.png"))
 formulas.append(Image.open("formulas/SimbologiaDelta.png"))
+formulas.append(Image.open("formulas/SimbologiaRoce.png"))
 #utilizamos la expresion ImageTK.PhotoImage para que tome un elemento de la lista "Formulas" para
 #transformar las imagenes de la lista en una PhotoImage para asi utilizar las fotos agregadas
 imagenes = [ImageTk.PhotoImage(formula) for formula in formulas]
@@ -93,6 +94,13 @@ def formulas():
             label_imagen[0].place(x=0,y=300)
             if simb == 1:
                 label_imagen[5].place(x=0,y=450) 
+            if roce == 1:
+                label_imagen[3].place(x=0, y=450)
+                label_imagen[5].place_forget()
+                if simb == 1:
+                    label_imagen[8].place(x=0, y=600)
+                else:
+                    label_imagen[5].place_forget()
         if choice == 'MV':
             label_imagen[1].place(x=0,y=300)
             if simb == 1:
