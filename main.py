@@ -52,42 +52,93 @@ def screenshot():
 #
 # -------------------------------------------------------------#
 
+#se crea una lista para almacenar las imagenes de las formulas en latex
 formulas = []
-
+#cargamos las imagenes de las formulas latex y las agregamos a la lista 
 formulas.append(Image.open("latex_formula.png"))
 formulas.append(Image.open("latex_formula_1.png"))
 formulas.append(Image.open("latex_formula_2.png"))
 formulas.append(Image.open("latex_formula_3.png"))
 formulas.append(Image.open("latex_formula_4.png"))
-
+formulas.append(Image.open("latex_formula_5.png"))
+formulas.append(Image.open("latex_formula_6.png"))
+formulas.append(Image.open("latex_formula_7.png"))
+#utilizamos la expresion ImageTK.PhotoImage para que tome un elemento de la lista "Formulas" para
+#transformar las imagenes de la lista en una PhotoImage para asi utilizar las fotos agregadas
 imagenes = [ImageTk.PhotoImage(formula) for formula in formulas]
-
+#creamos otra lista para agregar las fotos "label" que vamos a almacenar
 label_imagen = []
+#se itera sobre la lista imagen y crea un objeto label para cada imagen, luego lo agrega a la lista
 for imagen in imagenes:
     label = tk.Label(win, image=imagen, borderwidth=0)
     label_imagen.append(label)
-
+#esta variable se usa para controlar si se muestran las formulas o no
 show_formulas_var = tk.IntVar()
-
+show_simbologia_var = tk.IntVar()
+#verifica si al apretar el boton de mostrar formulas se muestren las formulas cuando presiones 
+#los botones de lo que quieras calcular, las posiciona en cierta parte de la pantalla
+#y tambien usa el place_forget para que al apretar otro boton se oculten las formulas
 def formulas():
-    if show_formulas_var.get() == 1:    
+    if show_formulas_var.get() == 1:
+        rbtn7.place(x=30,y=340)
+    else:
+        rbtn7.place_forget()
+    if show_formulas_var.get() == 1:
         choice = selectVar.get()
+        roce = checkRoce.get()
         if choice == 'FDA':
             label_imagen[0].place(x=0,y=300)
             label_imagen[1].place_forget()
             label_imagen[2].place_forget()
-        elif choice == 'MV':
+            if show_simbologia_var.get() == 1:
+                label_imagen[5].place(x=0,y=450)
+                label_imagen[6].place_forget() 
+                label_imagen[7].place_forget()
+            else:
+                label_imagen[5].place_forget()
+                label_imagen[6].place_forget() 
+                label_imagen[7].place_forget()    
+        if choice == 'MV':
             label_imagen[1].place(x=0,y=300)
             label_imagen[0].place_forget()
-            label_imagen[2].place_forget() 
-        elif choice == 'VEc':
+            label_imagen[2].place_forget()
+            if show_simbologia_var.get() == 1:
+                label_imagen[6].place(x=0,y=450)
+                label_imagen[5].place_forget() 
+                label_imagen[7].place_forget()
+            else:
+                label_imagen[5].place_forget()
+                label_imagen[6].place_forget() 
+                label_imagen[7].place_forget() 
+        if choice == 'VEc':
             label_imagen[2].place(x=0,y=300)
             label_imagen[1].place_forget()
             label_imagen[0].place_forget()
+            if show_simbologia_var.get() == 1:
+                label_imagen[7].place(x=0,y=450)
+                label_imagen[6].place_forget() 
+                label_imagen[5].place_forget()
+            else:
+                label_imagen[5].place_forget()
+                label_imagen[6].place_forget() 
+                label_imagen[7].place_forget()
+        if choice == 'Manual':
+            label_imagen[0].place(x=0,y=300)
+            label_imagen[1].place_forget()
+            label_imagen[2].place_forget() 
+            if show_simbologia_var.get() == 1:
+                label_imagen[5].place(x=0,y=450)
+                label_imagen[6].place_forget() 
+                label_imagen[7].place_forget()
+            else:
+                label_imagen[5].place_forget()
+                label_imagen[6].place_forget() 
+                label_imagen[7].place_forget()     
     else:
         for label in label_imagen:
-            label.place_forget()    
+            label.place_forget()
 
+ 
 
 
 def toggleTheme(): #Not work
@@ -487,11 +538,14 @@ rbtn2 = ctk.CTkRadioButton(
 rbtn3 = ctk.CTkRadioButton(
     frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar, command=formulas)
 rbtn4 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual')
+    frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual', command=formulas)
 rbtn5 = ctk.CTkSwitch(
     frameMenuCalc,text='Implementar Roce', variable=checkRoce)
 rbtn6 = ctk.CTkSwitch(
     frameMenuCalc, text="Modelo Matematico", variable=show_formulas_var, command=formulas)
+rbtn7 = ctk.CTkSwitch(
+    frameMenuCalc, text="Simbologia",variable=show_simbologia_var,command=formulas)
+   
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
 rbtn1.place(x=30, y=100)
@@ -500,6 +554,7 @@ rbtn3.place(x=30, y=180)
 rbtn4.place(x=30, y=220)
 rbtn5.place(x=30, y=260)
 rbtn6.place(x=30, y=300)
+
 selectVar.trace('w', refreshPmt)
 selectVar.trace('w', formulas)
 selectVar.trace('w', toggleMovManual)
