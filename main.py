@@ -195,13 +195,16 @@ def moveOn(event):
             labelDl.place(x=320, y=200)
             if desp != 0:
                 labelDl.configure(text=f'Desplazamiento: {int(desp)} metros')
+            else:
+                labelDl.configure(text='Desplazamiento: 0 metros')  # Desplazamiento es 0
 
             choice = selectVar.get()
             try:
                 fuerza = float(entryF.get())
                 if desp == 0:
-                    return
-                trabajo = calcInv(desp, fuerza)  # Pasar también la fuerza como argumento
+                    trabajo = 0  # El desplazamiento es 0, trabajo es 0
+                else:
+                    trabajo = calcInv(desp, fuerza)  # Pasar también la fuerza como argumento
                 print(f'Trabajo: {trabajo}')
                 canvasCaja.move(fig, despX, 0)
                 posX = event.x
@@ -209,6 +212,7 @@ def moveOn(event):
                     return
             except ValueError:
                 msg.showerror('Error', 'El valor de fuerza ingresado es inválido.')
+                labelDl.configure(text='Desplazamiento: 0 metros')
                 return
     return
 
