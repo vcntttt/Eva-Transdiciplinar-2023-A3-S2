@@ -62,6 +62,7 @@ formulas.append(Image.open("formulas/SimbologiaW.png"))
 formulas.append(Image.open("formulas/SimbologiaEc.png"))
 formulas.append(Image.open("formulas/SimbologiaDelta.png"))
 formulas.append(Image.open("formulas/SimbologiaRoce.png"))
+formulas.append(Image.open("formulas/TrabajoNetoCinetica.png"))
 #utilizamos la expresion ImageTK.PhotoImage para que tome un elemento de la lista "Formulas" para
 #transformar las imagenes de la lista en una PhotoImage para asi utilizar las fotos agregadas
 imagenes = [ImageTk.PhotoImage(formula) for formula in formulas]
@@ -74,7 +75,6 @@ for imagen in imagenes:
 #esta variable se usa para controlar si se muestran las formulas o no
 formulasVar = tk.IntVar()
 simbologiaVar = tk.IntVar()
-
 #verifica si al apretar el boton de mostrar formulas se muestren las formulas cuando presiones 
 #los botones de lo que quieras calcular, las posiciona en cierta parte de la pantalla
 #y tambien usa el place_forget para que al apretar otro boton se oculten las formulas
@@ -95,10 +95,11 @@ def formulas():
             if simb == 1:
                 label_imagen[5].place(x=0,y=450) 
             if roce == 1:
-                label_imagen[3].place(x=0, y=450)
+                label_imagen[3].place(x=960, y=430)
+                label_imagen[4].place(x=0, y=560)
                 label_imagen[5].place_forget()
                 if simb == 1:
-                    label_imagen[8].place(x=0, y=600)
+                    label_imagen[8].place(x=0, y=690)
                 else:
                     label_imagen[5].place_forget()
         if choice == 'MV':
@@ -108,7 +109,15 @@ def formulas():
         if choice == 'VEc':
             label_imagen[2].place(x=0,y=300)
             if simb == 1:
-                label_imagen[7].place(x=0,y=450)
+                label_imagen[7].place(x=0,y=480)
+            if roce == 1:
+                label_imagen[3].place(x=0,y=460)
+                label_imagen[9].place(x=0,y=600)
+                label_imagen[7].place_forget()
+                if simb ==1:
+                    label_imagen[7].place(x=0, y=690)
+                else:
+                    label_imagen[7].place_forget()
         if choice == 'Manual':
             label_imagen[0].place(x=0,y=300)
             if simb == 1:
