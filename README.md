@@ -13,6 +13,7 @@ El objetivo de este proyecto es calcular el trabajo que se realiza en un objeto 
 Nuestro proyecto busca demostrar como es el movimiento que realiza un objeto cuando se le transfiere energía mecánica (Trabajo).
 
 ## Origen
+El grupo decidió encontrar una forma sencilla y rápida de hacer los cálculos relacionados con el trabajo y la energía. Se quiere crear una aplicación que diera resultados precisos, rápidos y claros, que además mostrará una simulación de cómo se verían las diferentes fuerzas y movimientos que se realizan.
 ### Trabajo
 El concepto de trabajo ha sido modificado a lo largo de la historia, pero la formulación matemática y cuantitativa del trabajo, se atribuye a los científicos Galileo Galilei y Evangelista Torricelli en el siglo XVII en la comunidad científica. Estos investigadores comenzaron a investigar las leyes del movimiento y la conexión que existe entre la fuerza y el desplazamiento de los objetos.
 ### Energía
@@ -90,7 +91,9 @@ Para poder resolver ejercicios de trabajo y energía debemos realizar una serie 
 Se utilizan para calcular la energía cinética y potencial, así como para determinar la cantidad de trabajo realizado por las fuerzas en diferentes situaciones. Esto es útil para analizar el rendimiento de máquinas, calcular la velocidad de un objeto en movimiento o estudiar la caída de objetos en campos gravitacionales. Por ejemplo se utilizan para calcular la energía requerida en procesos industriales, rendimiento de máquinas y motores, así como para determinar los esfuerzos y deformaciones en estructuras bajo cargas, además son fundamentales para el diseño y análisis de sistemas y estructuras. Y así se pueden seguir nombrando numerosas aplicaciones que tienen la energía y el trabajo en distintas áreas.
 ## Programación
  ### Descripción de las herramientas utilizadas:
-Se utilizó el lenguaje de programación **“Python”**.
+Se utilizó el lenguaje de programación **“Python”**. 
+
+- Python es un lenguaje de programación de alto nivel, interpretado y utilizado en una amplia variedad de aplicaciones, se caracteriza por su sintaxis clara y legible, lo que facilita su aprendizaje y comprensión.
    
 - **Tkinter**: Es un módulo incorporado en Python que se utiliza para crear aplicaciones de escritorio con interfaces gráficas. Proporciona varios controles y widgets (ventanas) que se pueden utilizar para diseñar la interfaz de usuario.
 
