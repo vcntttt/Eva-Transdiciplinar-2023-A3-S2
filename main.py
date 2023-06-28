@@ -340,12 +340,10 @@ def calcRoce(caja, suelo):
 labelTitleM = ctk.CTkLabel(frameMenu, text='Menu',
                             text_color='white', font=("Perpetua",23))
 labelTitleM.place(relx=0.5, anchor='center', y=50)
-btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot, font=("Felix Titling",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"))
+btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot, font=("Felix Titling",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"), hover_color= ("Gray"))
 btnSS.place(relx=0.5, anchor='center', y=130)
-btnRun = ctk.CTkButton(frameMenu, text='Run', font=("Felix Titling",14), fg_color= ("Orange"), text_color=("black"), command=BtnRun)
-btnRun.bind('<Enter>', lambda e: e.widget.config(bg='white',padx=45, pady=3))
-btnStop = ctk.CTkButton(frameMenu,text='Detener', font=("Felix Titling",14), fg_color= ("orange"), text_color=("Black"), command=stop)
-btnStop.bind('<Enter>', lambda e: e.widget.config(bg='white',padx=26, pady=3))
+btnRun = ctk.CTkButton(frameMenu, text='Run', font=("Felix Titling",14), fg_color= ("Orange"), text_color=("black"), command=BtnRun, hover_color="White")
+btnStop = ctk.CTkButton(frameMenu,text='Detener', font=("Felix Titling",14), fg_color= ("orange"), text_color=("Black"), command=stop, hover_color="White")
 btnRun.place(relx=0.5, y=180, anchor='center')
 btnStop.place(relx = 0.5,y = 230,anchor = 'center')
 # Modelo Matematico
@@ -368,13 +366,13 @@ switchTheme = ctk.CTkSwitch(canvasCaja, text='Modo Oscuro',command=toggleTheme,t
 # -------------------------------------------------------------#
 # Elementos Parametros
 # -------------------------------------------------------------#
-entryF = ctk.CTkEntry(framePmt)
-entryD = ctk.CTkEntry(framePmt)
-entryA = ctk.CTkEntry(framePmt)
-entryM = ctk.CTkEntry(framePmt)
-entryV = ctk.CTkEntry(framePmt)
-entryVi = ctk.CTkEntry(framePmt)
-entryVf = ctk.CTkEntry(framePmt)
+entryF = ctk.CTkEntry(framePmt, border_color= "Blue")
+entryD = ctk.CTkEntry(framePmt, border_color= "blue")
+entryA = ctk.CTkEntry(framePmt, border_color= "Blue")
+entryM = ctk.CTkEntry(framePmt, border_color= "Blue")
+entryV = ctk.CTkEntry(framePmt, border_color= "Blue")
+entryVi = ctk.CTkEntry(framePmt, border_color= "Blue")
+entryVf = ctk.CTkEntry(framePmt, border_color= "Blue")
 labelF = ctk.CTkLabel(framePmt, text='Fuerza (N)', 
                       text_color='black', fg_color='#f1cc7a')
 labelD = ctk.CTkLabel(framePmt, text='Desplazamiento (m)', 
