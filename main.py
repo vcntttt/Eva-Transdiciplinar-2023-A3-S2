@@ -61,6 +61,8 @@ formulas.append(Image.open("formulas/TrabajoNeto.png"))
 formulas.append(Image.open("formulas/SimbologiaW.png"))
 formulas.append(Image.open("formulas/SimbologiaEc.png"))
 formulas.append(Image.open("formulas/SimbologiaDelta.png"))
+formulas.append(Image.open("formulas/SimbologiaRoce.png"))
+formulas.append(Image.open("formulas/TrabajoNetoCinetica.png"))
 #utilizamos la expresion ImageTK.PhotoImage para que tome un elemento de la lista "Formulas" para
 #transformar las imagenes de la lista en una PhotoImage para asi utilizar las fotos agregadas
 imagenes = [ImageTk.PhotoImage(formula) for formula in formulas]
@@ -73,7 +75,6 @@ for imagen in imagenes:
 #esta variable se usa para controlar si se muestran las formulas o no
 formulasVar = tk.IntVar()
 simbologiaVar = tk.IntVar()
-
 #verifica si al apretar el boton de mostrar formulas se muestren las formulas cuando presiones 
 #los botones de lo que quieras calcular, las posiciona en cierta parte de la pantalla
 #y tambien usa el place_forget para que al apretar otro boton se oculten las formulas
@@ -90,17 +91,28 @@ def formulas():
         choice = selectVar.get()
         roce = checkRoce.get()
         if choice == 'FDA':
-            label_imagen[0].place(x=0,y=300)
+            label_imagen[0].place(x=0,y=280)
             if simb == 1:
-                label_imagen[5].place(x=0,y=450) 
+                label_imagen[5].place(x=0,y=430) 
+            if roce == 1:
+                label_imagen[3].place(x=960, y=430)
+                label_imagen[4].place(x=0, y=400)
+                if simb == 1:
+                    label_imagen[8].place(x=0, y=530)
+                    label_imagen[5].place_forget()
         if choice == 'MV':
             label_imagen[1].place(x=0,y=300)
             if simb == 1:
                 label_imagen[6].place(x=0,y=450)
         if choice == 'VEc':
-            label_imagen[2].place(x=0,y=300)
+            label_imagen[2].place(x=0,y=280)
             if simb == 1:
-                label_imagen[7].place(x=0,y=450)
+                label_imagen[7].place(x=0,y=460)
+            if roce == 1:
+                label_imagen[3].place(x=960,y=460)
+                label_imagen[9].place(x=0,y=410)
+                if simb ==1:
+                    label_imagen[7].place(x=0, y=560)
         if choice == 'Manual':
             label_imagen[0].place(x=0,y=300)
             if simb == 1:
@@ -198,7 +210,7 @@ def BtnRun(): # Funcion que se ejecuta al presionar el boton run
     velocidad = float(parametros[4])
     vi = vf = 0
     print(f'Movimiento: {movimiento} ; Velocidad: {velocidad} ; Direccion: {direccion} ; Roce: {roce} ; Resultado: {resultado} ; Choice: {choice}') 
-    PintaLinea(movimiento, direccion)
+    PintaLinea(resultado, movimiento, direccion)
     if choice == 'VEc':
         vi = float(values[6])
         vf = float(values[7])
@@ -209,6 +221,7 @@ def BtnRun(): # Funcion que se ejecuta al presionar el boton run
 def posIni(): # Funcion utilizada para resetear la posicion de la caja, entre otras cosas
     choice = selectVar.get()
     x1,y1,x2,y2 = canvasCaja.coords(fig)
+    labelResultadoManual.configure(text= 'Trabajo: 0')
     posI = 0
     if choice == 'FDA' or choice == 'MV':
         posI = posIniX
@@ -223,9 +236,11 @@ def posIni(): # Funcion utilizada para resetear la posicion de la caja, entre ot
             despX = abs(x1-posI)
         canvasCaja.move(fig, despX, 0)
 
-def PintaLinea(movimiento, direccion): #Pinta la linea de movimiento segun la direccion y el movimiento
+def PintaLinea(resultado, movimiento, direccion): #Pinta la linea de movimiento segun la direccion y el movimiento
     choice = selectVar.get()
     canvasCaja.delete('linea')
+    if resultado == 0:
+        return
     if movimiento:
         canvasCaja.create_line(
             275, 200, 411, 200, fill='black', width=3, tags='linea')
@@ -272,7 +287,7 @@ def moveOn(event):
         canvas_width = canvasCaja.winfo_width()
         if newX1 >= 0 and newX2 <= canvas_width:
             desp = newX1  # Calcular el desplazamiento actualizado
-            labelDl.place(x=160, y=95)
+            labelDl.place(x=300, y=95)
             labelDl.configure(text=f'Desplazamiento: {int(desp)} metros')
             try:
                 fuerza = float(entryF.get())
@@ -300,6 +315,8 @@ def calcInv(desplazamiento, fuerza):
     try:
         trabajo = fuerza * desplazamiento
         print(f'Trabajo: {trabajo}')
+        labelResultadoManual.configure(text=f'Trabajo:{int(trabajo)} ')
+        canvasCaja.create_window(380,200, window=labelResultadoManual)
         return trabajo
     except ValueError:
         msg.showerror('Valores incompletos', 'Por favor ingresar todos los valores solicitados')
@@ -333,10 +350,17 @@ def calc(): #Funcion de calculo general, aca pasa la magia
                 wFr = u * m * g * d * math.cos(rad180)
                 wNeto = w + wFr
                 print(f'Trabajo del roce: {wFr}')
+                labelTrabajo.configure(text =f'Trabajo : {int(w)}')
+                canvasCaja.create_window(350, 420, window=labelTrabajo)
                 print(f'Trabajo: {w}')
+                labelwFr.configure(text =f'Trabajo aplicado por el Roce : {int(wFr)}')
+                canvasCaja.create_window(350, 450, window=labelwFr)
                 print(f'neto: {wNeto}')
+                labelNeto.configure(text =f'Trabajo Neto: {int(wNeto)}')
+                canvasCaja.create_window(350, 480, window=labelNeto)
                 if wNeto < 0:
                     movimiento = 0
+                    velocidad = 0
                 else:
                     movimiento = d
                     velocidad = f
@@ -346,6 +370,8 @@ def calc(): #Funcion de calculo general, aca pasa la magia
                 velocidad = f
             if wNeto < 0:
                 dire = -1
+                movimiento = d
+                velocidad = f
             elif wNeto > 0:
                 dire = 1
             aR = '{:.4f}'.format(aR)
@@ -413,7 +439,7 @@ def refreshPmt(*args): # Funcion encargada de poner los widgets en pantalla segu
     posIni()
     formulas()
     canvasCaja.delete('linea')
-    widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelMC,materialCaja,labelMS,materialSuelo,labelRr,switchRoce,switchMM,switchSimb]
+    widgetsForget = [labelF,entryF,labelD,entryD,labelA,entryA,labelV,entryV,labelM,entryM,labelVf,entryVf,labelVi,entryVi,labelMC,materialCaja,labelMS,materialSuelo,labelRr,switchRoce,switchMM,switchSimb, labelDl]
     for widget in widgetsForget:
         widget.place_forget()
 
@@ -549,6 +575,10 @@ labelVf = ctk.CTkLabel(framePmt, text='Velocidad Final (m/s²)',
                        text_color='black', fg_color='#f1cc7a')
 labelAngle = ctk.CTkLabel(framePmt, text='Solo se pueden ingresas angulos entre 0 y 180', 
                           text_color='black', fg_color='#f1cc7a')
+labelTrabajo = ctk.CTkLabel(canvasCaja,text='Trabajo: ', text_color='white', fg_color='#A18072')
+labelwFr= ctk.CTkLabel(canvasCaja,text='Trabajo Del Roce: ', text_color='white', fg_color='#A18072')
+labelNeto = ctk.CTkLabel(canvasCaja,text='Trabajo Neto: ', text_color='white', fg_color='#A18072')
+labelResultadoManual = ctk.CTkLabel(canvasCaja, text='Trabajo Manual', text_color='black')
 # -------------------------------------------------------------#
 # Elementos Menu Calculos
 # -------------------------------------------------------------#
