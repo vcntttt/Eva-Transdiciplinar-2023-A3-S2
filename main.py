@@ -209,21 +209,32 @@ def pickBox(event): #Detecta el click en la caja
     return
 
 desp = 0
-def moveOn(event): #Luego de haber hecho un click en la caja, detecta el movimiento del mouse en la pantalla y mueve la caja con el mouse
-    global posX,desp
+def moveOn(event):
+    global posX, desp
     if posX is not None:
-        x1,y2,x2,y2 = canvasCaja.coords(fig)
+        x1, y1, x2, y2 = canvasCaja.coords(fig)
         despX = event.x - posX
         newX1 = x1 + despX
         newX2 = x2 + despX
-        if newX1 >= 0 and newX2 <= canvasCaja.winfo_width():
-            desp = abs(x1-posIniX) 
-            labelDl.place(x= 320, y= 200)
-            labelDl.configure(text = f'Desplazamiento: {int(desp)} metros')
-            calcInv(desp)
-            canvasCaja.move(fig,despX,0)
-            posX = event.x
-            if desp > 260:
+        canvas_width = canvasCaja.winfo_width()
+        if newX1 >= 0 and newX2 <= canvas_width:
+            desp = newX1  # Calcular el desplazamiento actualizado
+            labelDl.place(x=160, y=95)
+            labelDl.configure(text=f'Desplazamiento: {int(desp)} metros')
+            try:
+                fuerza = float(entryF.get())
+                if desp == 0:
+                    trabajo = 0  # El desplazamiento es 0, trabajo es 0
+                else:
+                    trabajo = calcInv(desp, fuerza)  # Pasar también la fuerza como argumento
+                print(f'Trabajo: {trabajo}')
+                canvasCaja.move(fig, despX, 0)
+                posX = event.x
+                if desp > 260 and despX > 0:
+                    return
+            except ValueError:
+                msg.showerror('Error', 'El valor de fuerza ingresado es inválido.')
+                labelDl.configure(text='Desplazamiento: 0 metros')
                 return
     return
 
@@ -232,17 +243,14 @@ def letItgo(event): #Detecta cuando soltamos el click en la caja
     posX = None
     return
 
-def calcInv(desplazamiento): #Calcula el movimiento de la caja segun el desplazamiento manual
-    choice = selectVar.get()
+def calcInv(desplazamiento, fuerza):
     try:
-        fuerza = float(entryF.get())
         trabajo = fuerza * desplazamiento
         print(f'Trabajo: {trabajo}')
-
+        return trabajo
     except ValueError:
-        msg.showerror(
-                'Valores incompletos', 'Porfavor ingresar todos los valores solicitados')
-    return
+        msg.showerror('Valores incompletos', 'Por favor ingresar todos los valores solicitados')
+        return 0
 # -------------------------------------------------------------#
 # Funciones Parametros
 # -------------------------------------------------------------#
@@ -398,7 +406,6 @@ def refreshPmt(*args): # Funcion encargada de poner los widgets en pantalla segu
     if choice == 'Manual':
         labelF.place(relx=0.4,y=70)
         entryF.place(relx=0.4, y = 100)
-        switchRoce.place(x=30, y=260)
 
     return 
 
