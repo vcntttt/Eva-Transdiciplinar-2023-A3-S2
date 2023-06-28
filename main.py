@@ -27,7 +27,7 @@ fuente = ctk.CTkFont(family='Times New Roman', size=12)
 frameMenu = ctk.CTkFrame(win, fg_color='#2f3123', width=240, height=800)
 frameMenu.place(x=0, y=0)
 canvasCaja = tk.Canvas(win, width=720, height=500)
-canvasCaja.place(x=240, y=0)
+canvasCaja.place(x=300, y=0)
 framePmt = ctk.CTkFrame(win, fg_color='#f1cc7a',
                         width=720, height=300, corner_radius=0)
 framePmt.place(x=240, y=500)
@@ -38,8 +38,6 @@ frameMenuCalc.place(x=960, y=0)
 # Funciones Menu
 # -------------------------------------------------------------#
 contador = 1
-
-
 def screenshot():
     global contador
     x = win.winfo_rootx()
@@ -97,7 +95,15 @@ def formulas():
             else:
                 label_imagen[5].place_forget()
                 label_imagen[6].place_forget() 
-                label_imagen[7].place_forget()    
+                label_imagen[7].place_forget()
+            if roce == 1:
+                label_imagen[3].place(x=0, y=450)
+                if show_simbologia_var.get() == 1:
+                    label_imagen[5].place(x=0, y=600)
+                else:
+                    label_imagen[5].place_forget()
+            else:
+                label_imagen[3].place_forget()    
         if choice == 'MV':
             label_imagen[1].place(x=0,y=300)
             label_imagen[0].place_forget()
@@ -137,10 +143,7 @@ def formulas():
     else:
         for label in label_imagen:
             label.place_forget()
-
  
-
-
 def toggleTheme(): #Not work
     theme = win._get_appearance_mode()
     print(theme)
@@ -152,7 +155,6 @@ def toggleTheme(): #Not work
 # -------------------------------------------------------------#
 # Funciones Caja
 # -------------------------------------------------------------#
-
 
 def mueveCaja(movimiento = 0, direccion = 1,velocidad = 1):
     choice = selectVar.get()
@@ -401,21 +403,26 @@ def refreshPmt(*args):
     for widget in widgetsForget:
         widget.place_forget()
     if roce == 1:
-        x = [0.4,0.7,0.7,0.6]
-        y = [50,80,110,140]
-        labelMC.place(relx=0.1, y= 50)
-        materialCaja.place(relx=0.1,y= 80)
-        labelMS.place(relx=0.1, y=150)
-        materialSuelo.place(relx=0.1,y=180)
-        labelRr.place(relx=0.1, y=250)
+        x = [0.4,0.7,0.7,0.6] 
+        y = [50,80,110,140] 
+        labelMC.place(relx=0.1, y= 50) 
+        materialCaja.place(relx=0.1,y= 80)  
+        labelMS.place(relx=0.1, y=150) 
+        materialSuelo.place(relx=0.1,y=180)  
+        labelRr.place(relx=0.1, y=250) 
     else:
         x = [0.2,0.5,0.6,0.4]
         y = [50,80,110,140]
-    if choice == 'FDA':
-        labelF.place(relx = x[0], y = y[0])
-        entryF.place(relx = x[0], y = y[1])
-        labelD.place(relx = x[2], y = y[0])
+    if choice == 'FDA': 
+        labelF.place(relx = x[0], y = y[0]) 
+        entryF.place(relx = x[0], y = y[1]) 
+        labelD.place(relx = x[2], y = y[0]) 
         entryD.place(relx = x[2], y = y[1])
+        if show_formulas_var.get() == 1:  
+            if roce == 1:
+                label_imagen[3].place(x=0, y=450)
+            else:
+                label_imagen[3].place_forget()
         if roce == 1:
             labelM.place(relx = x[0], y = y[2])
             entryM.place(relx = x[0], y = y[3])

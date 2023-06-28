@@ -23,10 +23,10 @@ def convert_latex_to_image(latex_formula, output_path):
     plt.close(fig)
     
 # Ejemplo de uso
-formula = r"$\Delta E_C$"
-formula2= r"$E_{cf}$"
+formula = r"$\theta$"
+formula2= r"$\mu$"
 formula3= r"$E_{ci}$"
-latex_formula = "  Donde:\n - "+(formula)+" = Variacion de \n   energia\n - "+(formula2)+" = Energia Cinetica\n   final\n - " +(formula3)+ " = Energia Cinetica\n   inicial" 
-output_path = "latex_formula_7.png"
+latex_formula = "Donde: \n  - W = Trabajo \n  - F = Fuerza \n  - D = Desplazamiento \n  - "+(formula)+" = Angulo \n  - "+(formula2)+" = Coficiente \n  de Roce "
+output_path = "latex_formula_8.png"
 convert_latex_to_image(latex_formula, output_path)
 print("La fórmula LaTeX se ha convertido en una imagen con fondo de color y letras blancas y se ha guardado en", output_path)
