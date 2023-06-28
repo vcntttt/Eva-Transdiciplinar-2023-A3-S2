@@ -168,8 +168,10 @@ def mueveCaja(resultado,direccion,velocidad): # Funcion que mueve la caja para e
         confirmClose()
     return
 win.protocol('WM_DELETE_WINDOW', confirmClose)
-def mueveCajaVEc(direccion = 1, vi = 0, vf = 0): # Funcion que mueve la caja para la variacion de la energia cinetica
+def mueveCajaVEc(resultado, direccion = 1, vi = 0, vf = 0): # Funcion que mueve la caja para la variacion de la energia cinetica
     global moving
+    if resultado <=0:
+        return
     try:
         moving = True
         desplazamiento = 540
@@ -214,7 +216,7 @@ def BtnRun(): # Funcion que se ejecuta al presionar el boton run
     if choice == 'VEc':
         vi = float(values[6])
         vf = float(values[7])
-        mueveCajaVEc(direccion, vi, vf)
+        mueveCajaVEc(resultado, direccion, vi, vf)
     else:
         mueveCaja(resultado,direccion, velocidad)
 
@@ -405,12 +407,26 @@ def calc(): #Funcion de calculo general, aca pasa la magia
             m = float(entryM.get())
             vf = float(entryVf.get())
             vi = float(entryVi.get())
+            d = float(entryD.get())
             eCf = (0.5 * m) * (vf ** 2)
             eCi = (0.5 * m) * (vi ** 2)
             if u != 0:
                 w = eCf - eCi
                 wFr = u * m * g * d * math.cos(rad180)
                 wNeto = w + wFr
+                print(f'Trabajo del roce: {wFr}')
+                labelTrabajo.configure(text =f'Trabajo : {int(w)}')
+                canvasCaja.create_window(350, 420, window=labelTrabajo)
+                print(f'Trabajo: {w}')
+                labelwFr.configure(text =f'Trabajo aplicado por el Roce : {int(wFr)}')
+                canvasCaja.create_window(350, 450, window=labelwFr)
+                print(f'neto: {wNeto}')
+                labelNeto.configure(text =f'Trabajo Neto: {int(wNeto)}')
+                canvasCaja.create_window(350, 480, window=labelNeto)
+                if wNeto < 0:
+                    movimiento = 0
+                else:
+                    movimiento = d
             else:
                 wNeto = eCf - eCi
             movimiento = wNeto
@@ -483,6 +499,11 @@ def refreshPmt(*args): # Funcion encargada de poner los widgets en pantalla segu
         entryVf.place(relx  = x[2], y = y[1])
         labelM.place(relx = x[3], y = y[2])
         entryM.place(relx = x[3], y = y[3])
+        if roce == 1:
+            labelM.place(relx = x[0], y = y[2])
+            entryM.place(relx = x[0], y = y[3])
+            labelD.place(relx = x[2], y = y[2])
+            entryD.place(relx = x[2], y = y[3])
         switchRoce.place(x=30, y=260)
         switchMM.place(x=30, y=290)
 
