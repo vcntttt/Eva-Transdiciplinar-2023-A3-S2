@@ -116,8 +116,6 @@ def formulas():
                 label_imagen[7].place_forget()
                 if simb ==1:
                     label_imagen[7].place(x=0, y=650)
-                else:
-                    label_imagen[7].place_forget()
         if choice == 'Manual':
             label_imagen[0].place(x=0,y=300)
             if simb == 1:
