@@ -192,7 +192,7 @@ def moveOn(event):
         canvas_width = canvasCaja.winfo_width()
         if newX1 >= 0 and newX2 <= canvas_width:
             desp = abs(newX2 - x2)  # Calcular el desplazamiento actualizado
-            labelDl.place(x=320, y=200)
+            labelDl.place(x=160, y=95)
             if desp != 0:
                 labelDl.configure(text=f'Desplazamiento: {int(desp)} metros')
             else:
