@@ -340,12 +340,12 @@ def calcRoce(caja, suelo):
 labelTitleM = ctk.CTkLabel(frameMenu, text='Menu',
                             text_color='white', font=("Perpetua",23))
 labelTitleM.place(relx=0.5, anchor='center', y=50)
-btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot, font=("Felix Titling",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"), hover_color= ("Gray"))
+btnSS = ctk.CTkButton(frameMenu, text="Screenshot", command=screenshot, font=("Felix Titling",14), fg_color=("White"), bg_color=("Gray"), text_color=("Black"), hover_color= ("Gray")) #Atributos del boton (Color, texto, estilo de letra, color del boton al presionar sobre el, accion a realizar)
 btnSS.place(relx=0.5, anchor='center', y=130)
-btnRun = ctk.CTkButton(frameMenu, text='Run', font=("Felix Titling",14), fg_color= ("Orange"), text_color=("black"), command=BtnRun, hover_color="White")
-btnStop = ctk.CTkButton(frameMenu,text='Detener', font=("Felix Titling",14), fg_color= ("orange"), text_color=("Black"), command=stop, hover_color="White")
-btnRun.place(relx=0.5, y=180, anchor='center')
-btnStop.place(relx = 0.5,y = 230,anchor = 'center')
+btnRun = ctk.CTkButton(frameMenu, text='Run', font=("Felix Titling",14), fg_color= ("Orange"), text_color=("black"), command=BtnRun, hover_color="White") #Atributos del boton (Color, texto, estilo de letra, color del boton al presionar sobre el, accion a realizar)
+btnStop = ctk.CTkButton(frameMenu,text='Detener', font=("Felix Titling",14), fg_color= ("orange"), text_color=("Black"), command=stop, hover_color="White") #Atributos del boton (Color, texto, estilo de letra, color del boton al presionar sobre el, accion a realizar)
+btnRun.place(relx=0.5, y=180, anchor='center') #Lugar del boton
+btnStop.place(relx = 0.5,y = 230,anchor = 'center') #Lugar del boton
 # Modelo Matematico
 # -------------------------------------------------------------#
 # Elementos Caja
@@ -399,14 +399,14 @@ selectVar = tk.StringVar()
 toggleManual = tk.IntVar()
 checkRoce = tk.IntVar(value=0)
 rbtn1 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar, text_color = "Yellow", font=("Calisto MT",12), fg_color='red')
+    frameMenuCalc, text='Calcular Trabajo : ', value='FDA', variable=selectVar, text_color = "Yellow", font=("Calisto MT",12), fg_color='red') #Atributos de la casilla (Color, texto, estilo de letra)
 rbtn2 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar, text_color= "Yellow", font=("Calisto MT",12), fg_color="Light Green")
+    frameMenuCalc, text='Calcular Energia Cinetica: ', value='MV', variable=selectVar, text_color= "Yellow", font=("Calisto MT",12), fg_color="Light Green") #Atributos de la casilla (Color, texto, estilo de letra)
 rbtn3 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar, text_color= "Yellow", font=("Calisto MT",12), fg_color="dark Orange")
+    frameMenuCalc, text='Variacion de energia: ', value='VEc', variable=selectVar, text_color= "Yellow", font=("Calisto MT",12), fg_color="dark Orange") #Atributos de la casilla (Color, texto, estilo de letra)
 rbtn4 = ctk.CTkRadioButton(
-    frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual', text_color= "Yellow", font=("Calisto MT",12), fg_color='Light Blue')
-rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', variable=checkRoce, text_color= "Yellow", font=("Calisto MT",12))
+    frameMenuCalc, text='Desplazamiento manual',variable=selectVar,value='Manual', text_color= "Yellow", font=("Calisto MT",12), fg_color='Light Blue') #Atributos de la casilla (Color, texto, estilo de letra)
+rbtn5 = ctk.CTkSwitch(frameMenuCalc,text='Implementar Roce', variable=checkRoce, text_color= "Yellow", font=("Calisto MT",12)) #Atributos de la casilla (Color, texto, estilo de letra)
 labelTitleC.place(relx=0.5, anchor='center', y=50)
 labelTitleTyEc.place(relx=0.5, anchor='center', y=50)
 rbtn1.place(x=30, y=100)
