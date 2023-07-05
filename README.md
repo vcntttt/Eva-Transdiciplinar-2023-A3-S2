@@ -112,8 +112,11 @@ Primero que nada, nos tenemos que asegurar de tener [Python 3.11](https://www.py
     pip install -r requirements.txt
  
 3. Ejecutar 😎.
-4. Se adjuntara un link al video tutorial de uso a continuación:
-  **no alcanzamos**
+4. Se adjuntara un link explicando la guia de instalacion a continuacion:
+   [Guia de Instalacion](https://www.youtube.com/watch?v=qD4JyWkhpxs)
+5. Se adjuntara un link al video tutorial de uso a continuación:
+   [Uso de Aplicacion y Modelo Fisico](https://www.youtube.com/watch?v=zvMCDFs9r94)
+
 ## Conclusiones
 El proyecto demuestra una sólida investigación y entendimiento de los conceptos físicos de trabajo y energía. Se investigaron y aplicaron fórmulas matemáticas para el cálculo del trabajo, considerando la magnitud de la fuerza aplicada, la distancia recorrida y el ángulo entre la dirección de la fuerza y el desplazamiento. Además, se utilizó la fórmula de la energía cinética, que está relacionada directamente con el trabajo realizado sobre un objeto.
 Lo que a su vez condujo hacia la integración de la programación en Python que permitió automatizar los cálculos y la simulación del movimiento del objeto. Se investigaron y emplearon las bibliotecas tkinter, ttk bootstrap y PIL para desarrollar una interfaz gráfica de usuario intuitiva y atractiva, lo que entregó una capacidad para crear una interfaz visual mejorada que contribuyó a la experiencia del usuario y facilitó la interacción con el programa.
