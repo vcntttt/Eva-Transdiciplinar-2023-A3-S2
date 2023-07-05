@@ -100,6 +100,8 @@ Se utilizó el lenguaje de programación **“Python”**.
 - **ttkbootstrap**: Es una biblioteca de temas para Tkinter que proporciona una apariencia mejorada a los elementos de la GUI (interfaz gráfica del usuario). Se utiliza para establecer el tema de la ventana principal.
 
 - **PIL (Python Imaging Library)**: Es una biblioteca de procesamiento de imágenes en Python. Se utiliza aquí para capturar una captura de pantalla de la ventana de la aplicación.
+
+- link explicativo del codigo: [Explicacion del Codigo](https://youtu.be/ungINfVGpe8) y [Explicacion del Codigo Parte 2](https://youtu.be/73fdcocVn3Y)
 ## Guía de Instalación
 Primero que nada, nos tenemos que asegurar de tener [Python 3.11](https://www.python.org/downloads/), [Git](https://git-scm.com/downloads) y algún editor de código, de preferencia, [Visual Studio Code](https://code.visualstudio.com/download). Tenemos que ejecutar un par de comandos, para esto podemos usar la consola predeterminada de nuestro sistema, o en cambio, podemos utilizar la terminal integrada de Visual Studio Code, nosotros recomendamos esta ultima opción.
 
